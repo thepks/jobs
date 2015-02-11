@@ -7,7 +7,25 @@ jobController = function() {
    return {
       init:function(page) {
          job_page = page;
-	 fetch_job_types();
+	       fetch_job_types();
+
+	       	$(job_page).find('#load').hide();
+	       	$(job_page).find('#recommendation').hide();
+
+         	$(job_page).find('#loadEvt').click(function(evt) {
+  				  console.log('In event load');
+	  				evt.preventDefault();
+		  			$(job_page).find('#load').slideToggle("slow");
+
+  				});
+
+        	$(job_page).find('#recommendationEvt').click(function(evt) {
+  				  console.log('In event recommendation');
+	  				evt.preventDefault();
+		  			$(job_page).find('#recommendation').slideToggle("slow");
+
+  				});
+
          $('#importFile').change(loadFromHTML);
          initialised = true;
          console.log('Initialised job-controller');
@@ -15,7 +33,7 @@ jobController = function() {
    }
 }();
 
-   
+
 function loadFromHTML(event){
    var reader = new FileReader();
    reader.onload = function(evt) {
@@ -68,7 +86,7 @@ function parse_html(data) {
 	//console.log(processed[0]);
 	var line_cnt = 0;
 	for (var l in line_array) {
-		line_cnt ++;	
+		line_cnt ++;
 	}
 
    return line_array;
@@ -85,7 +103,7 @@ function upload(data) {
      headers: {
 	'Content-type' : 'application/json'
      }
-  
+
    };
 
    var config = {
@@ -141,7 +159,7 @@ function upload(data) {
 			for (var j=0; j<field_names.length; j++){
 				last_pos=lines[l].indexOf(field_names[j],last_pos);
 				col.push(last_pos);
-			}			
+			}
 
 		} else { // rest of the file is the data
 			job = {};
@@ -153,9 +171,9 @@ function upload(data) {
 					val = lines[l].slice(col[w]);
 				}
 				if (w == config.job_field) {
-					// Look for mass		
+					// Look for mass
 					job[field_names[w]] = val.toString().trim().split(/ +/)[0];
-		
+
 				} else if(field_names[w] === config.start_time_field){
 					strtdate = job[config.start_date_field];
 					tf = val.split(':');
@@ -171,16 +189,16 @@ function upload(data) {
 					val = sap_date(val);
 					job[field_names[w]] = val;
 				} else {
-			
+
 //				console.log(val);
-				//if (w == 
+				//if (w ==
 				   job[field_names[w]] = val.toString().trim().split(/ +/)[0];
 				}
 			}
 //			console.log(job);
 		        job.type = "JobRecord";
 		        job.structure = "v0.1";
-	
+
 
 			$.ajax({
 				url: upload_url,
@@ -191,10 +209,10 @@ function upload(data) {
 				success: function() {
 					console.log("Uploaded: " + job['Jobname']);
 				}
-				
+
 			});
 		}
-	}	
+	}
 	return col;
 
 
