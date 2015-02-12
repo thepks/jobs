@@ -12,3 +12,8 @@ section {
   width: 85%;
 }
 
+.auth-results {
+  display: none;
+  color: red;
+}
+

@@ -4,42 +4,80 @@ jobController = function() {
    var job_page;
    var logged_on = false;
    var auth_token = '';
+   var analysis_type;  // 1= history, 2= variability, 3=degradation
 
    return {
       init:function(page) {
          job_page = page;
 	       fetch_job_types();
 
-	       	$(job_page).find('#load').hide();
-	       	$(job_page).find('#recommendation').hide();
-	       	$(job_page).find('#authentication').hide();
-	       	$(job_page).find('#logoffEvt').hide();
-	       	$(job_page).find('#history-form').hide();
-
+          hide_all(job_page);
 
          	$(job_page).find('#loadEvt').click(function(evt) {
   				  console.log('In event load');
 	  				evt.preventDefault();
-		  			$(job_page).find('#load').slideToggle("slow");
+	  				hide_all(job_page);
+		  			$(job_page).find('#load').show();
 
   				});
 
   				$(job_page).find('#historyEvt').click(function(evt) {
   				  console.log('In history event');
   				  evt.preventDefault();
-  				  (job_page).find('#history-form').slideToggle("slow");
+  				  hide_all(job_page);
+  				  (job_page).find('#program-sect').show();
+  				  (job_page).find('#history-form').show();
+  				  (job_page).find('#history-form-title').text('Select program details to be displayed');
+  				  (job_page).find('#analysis-button').text('Display History');
+  				  (job_page).find('#analysis-button').val('1');
+  				  analysis_type = 1;
   				});
+
+  				$(job_page).find('#variabilityEvt').click(function(evt) {
+  				  console.log('In variability event');
+  				  evt.preventDefault();
+  				  hide_all(job_page);
+  				  (job_page).find('#program-sect').hide();
+  				  (job_page).find('#history-form').show();
+  				  (job_page).find('#history-form-title').text('Select duration for variability analysis');
+  				  (job_page).find('#analysis-button').text('Display Variability');
+  				  (job_page).find('#analysis-button').val('2');
+  				  analysis_type = 2;
+  				});
+
+  				$(job_page).find('#degradationEvt').click(function(evt) {
+  				  console.log('In degradation event');
+  				  evt.preventDefault();
+  				  hide_all(job_page);
+  				  (job_page).find('#program-sect').hide();
+  				  (job_page).find('#history-form').show();
+  				  (job_page).find('#history-form-title').text('Select duration for degradation analysis');
+  				  (job_page).find('#analysis-button').text('Display Degradation');
+  				  (job_page).find('#analysis-button').val('3');
+  				  analysis_type = 3;
+  				});
+
 
         	$(job_page).find('#recommendationEvt').click(function(evt) {
   				  console.log('In event recommendation');
 	  				evt.preventDefault();
-		  			$(job_page).find('#recommendation').slideToggle("slow");
+	  				hide_all(job_page);
+
+  				  (job_page).find('#program-sect').hide();
+  				  (job_page).find('#history-form').show();
+  				  (job_page).find('#history-form-title').text('Select duration for recommendation analysis');
+  				  (job_page).find('#analysis-button').text('Display Recommendations');
+  				  (job_page).find('#analysis-button').val('4');
+  				  analysis_type = 4;
+
+		  			$(job_page).find('#recommendation').show();
 
   				});
 
         	$(job_page).find('#logonEvt').click(function(evt) {
   				  console.log('In event logon');
 	  				evt.preventDefault();
+	  				hide_all(job_page);
 		  			$(job_page).find('#authentication').slideToggle("slow");
 
   				});
@@ -64,6 +102,7 @@ jobController = function() {
                 });
 
             auth_token = '';
+            hide_all(job_page);
   				});
 
   				$(job_page).find('#authButton').click(function(evt) {
@@ -80,17 +119,25 @@ jobController = function() {
   	  			  success: function(data, status, jqXHR){
                 console.log("Data: " + data + "\nStatus: " + status);
                 auth_token = jqXHR.getResponseHeader("AuthSession");
+    	       	  $(job_page).find('#authentication').hide();
+    		  			$(job_page).find('#logonEvt').hide();
+                $(job_page).find('#logoffEvt').show();
+                hide_all(job_page);
+                logged_on = true;
               },
               error: function(data,status) {
                 console.log("Error! "+ data + "\nStatus: " + status)
+
+  				      $(job_page).find('#auth-results').show();
+  			        $(job_page).find('#auth-results').text('Logon Failed! ' + status);
+
+    				    setTimeout(function(){
+    				      $(job_page).find('#auth-results').hide();
+    				    },2000);
+
+
                 }
                 });
-
-  				  logged_on = true;
-
-	       	  $(job_page).find('#authentication').hide();
-		  			$(job_page).find('#logonEvt').hide();
-            $(job_page).find('#logoffEvt').show();
 
   				});
 
@@ -103,6 +150,16 @@ jobController = function() {
    }
 }();
 
+
+function hide_all(job_page){
+
+  $(job_page).find('#load').hide();
+ 	$(job_page).find('#recommendation').hide();
+ 	$(job_page).find('#authentication').hide();
+ 	$(job_page).find('#logoffEvt').hide();
+ 	$(job_page).find('#history-form').hide();
+
+}
 
 function loadFromHTML(event){
    var reader = new FileReader();

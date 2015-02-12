@@ -29,7 +29,6 @@
             <li><a href="#" id="variabilityEvt">Variability</a></li>
             <li><a href="#" id="degradationEvt">Degradation</a></li>
             <li><a href="#" id="recommendationEvt">Recommendations</a></li>
-            <li><a href="#" id="helpEvt">Help</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#" id="logonEvt"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -46,12 +45,13 @@
 
     <section>
       <div id="load" class="jumbotron">
+        <h3>Select file of job data to upload</h3>
         <div class="form-group">
       	  <label for="importFile">Job file to load</label>
           <input type="file" id="importFile" name="importFile" class="form-control" />
         </div>
         <div class="form-group">
-          <button type="button" class="btn btn-primary" id="loadButton">Load</button>
+          <button type="button" class="btn btn-primary" id="loadButton">Store Job Details</button>
         </div>
       </div>
     </section>
@@ -59,7 +59,7 @@
 
     <section>
       <div id="history-form" class="jumbotron">
-        <h3>Select program details to be displayed</h3>
+        <h3 id='history-form-title'>Select program details to be displayed</h3>
         <div class="row form-group">
           <span class="col-sm-6">
       	    <label for="startDate">Start Date</label>
@@ -72,15 +72,16 @@
         </div>
         <div class="row form-group">
           <span class="col-sm-6">
-            <label for="program_name">Program</label>
-            <input list="program-names" name="program-name"/>
-            <datalist id="program-names">
-              <option value="prog1"/>
-            </datalist>
-
+            <span id='program-sect'>
+              <label for="program_name">Program</label>
+              <input list="program-names" name="program-name" id="program-name"/>
+              <datalist id="program-names">
+                <option value="prog1"/>
+              </datalist>
+            </span>
           </span>
           <span class="col-sm-3">
-            <button type="button" class="btn btn-primary" id="historyButton">Load</button>
+            <button type="button" class="btn btn-primary" id="analysis-button">Load</button>
           </span>
           <span class="col-sm-3">&nbsp;</span>
         </div>
@@ -123,6 +124,12 @@
             <button type="button" class="btn btn-primary" id="authButton"><span class="glyphicon glyphicon-log-in"></span> Login</button>
           </span>
         </div>
+        <div class="row">
+          <span class="col-sm-9">&nbsp;</span>
+          <span class="col-sm-3">
+            <h5 id="auth-results" class="auth-results">Logon Failed!</h5>
+          </span>
+        </div>
       </div>
     </section>
 
@@ -130,7 +137,7 @@
    <section>
    </main>
 
-   <footer><a href="/_utils/database.html?jobs/_all_docs">DB Home View</a></footer>
+   <footer>&nbsp;</footer>
 
 </body>
 
