@@ -3,7 +3,7 @@ jobController = function() {
    var initialised = false;
    var job_page;
    var logged_on = false;
-
+   var auth_token = '';
 
    return {
       init:function(page) {
@@ -44,19 +44,42 @@ jobController = function() {
 		  			$(job_page).find('#logonEvt').show();
             $(job_page).find('#logoffEvt').hide();
             logged_on = false;
+  				  $.ajax({
+  				    type: "DELETE",
+  				    url: "/_session",
+  	  			  success: function(data, status, jqXHR){
+  	  			    // Mod to add in setting the cookie
+                console.log("Data: " + data + "\nStatus: " + status);
+              },
+              error: function(data,status) {
+                console.log("Error! "+ data + "\nStatus: " + status)
+                }
+                });
+
+            auth_token = '';
   				});
 
   				$(job_page).find('#authButton').click(function(evt) {
   				  console.log('In logon');
   				  var usr = $(job_page).find('#username').val();
   				  var pwd = $(job_page).find('#password').val();
-  				  $.post("/_session", {
-  				    name : usr,
-  				    password : pwd
-  				  }, function(data, status){
-  				    // Mod to add in setting the cookie
-              console.log("Data: " + data + "\nStatus: " + status);
-            });
+  				  $.ajax({
+  				    type: "POST",
+  				    url: "/_session",
+  				    data: {
+    				    name : usr,
+    				    password : pwd
+  	  			  },
+  	  			  success: function(data, status, jqXHR){
+  	  			    // Mod to add in setting the cookie
+                console.log("Data: " + data + "\nStatus: " + status);
+                auth_token = jqXHR.getResponseHeader("AuthSession");
+                document.cookie="AuthSession="+auth_token;
+              },
+              error: function(data,status) {
+                console.log("Error! "+ data + "\nStatus: " + status)
+                }
+                });
 
   				  logged_on = true;
 
