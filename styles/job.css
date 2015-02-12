@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+
+section {
+	margin:20px 0 0 10px;
+}
+
+.load {
+  width: 65%;
+}
+
+.recommendation {
+  width: 85%;
+}
+

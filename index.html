@@ -32,8 +32,9 @@
             <li><a href="#" id="helpEvt">Help</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            <li><a href="#" id="logonEvt"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            <li><a href="#" id="logoffEvt"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+
           </ul>
         </div>
       </div>
@@ -44,13 +45,13 @@
       <form role="form" id="jobForm">
 
     <section>
-      <div id="load">
+      <div id="load" class="jumbotron">
         <div class="form-group">
       	  <label for="importFile">Job file to load</label>
           <input type="file" id="importFile" name="importFile" class="form-control" />
         </div>
         <div class="form-group">
-          <button type="button" class="btn btn-primary">Load</button>
+          <button type="button" class="btn btn-primary" id="loadButton">Load</button>
         </div>
       </div>
     </section>
@@ -66,6 +67,30 @@
           <li><a href="#">Cancelled</a></li>
           <li><a href="#">Help</a></li>
         </ul>
+      </div>
+    </section>
+
+
+    <section>
+      <div id="authentication" class="container">
+        <div class="row form-group">
+          <span class="col-sm-6">&nbsp;</span>
+          <span class="col-sm-3">
+        	  <label for="username">Id</label>
+            <input type="text" id="username" name="username" class="form-control" />
+          </span>
+          <span class="col-sm-3">
+        	  <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" />
+          </span>
+
+        </div>
+        <div class="row form-group">
+          <span class="col-sm-9">&nbsp;</span>
+          <span class="col-sm-3">
+            <button type="button" class="btn btn-primary" id="authButton"><span class="glyphicon glyphicon-log-in"></span> Login</button>
+          </span>
+        </div>
       </div>
     </section>
 

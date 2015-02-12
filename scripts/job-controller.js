@@ -2,6 +2,7 @@
 jobController = function() {
    var initialised = false;
    var job_page;
+   var logged_on = false;
 
 
    return {
@@ -11,6 +12,9 @@ jobController = function() {
 
 	       	$(job_page).find('#load').hide();
 	       	$(job_page).find('#recommendation').hide();
+	       	$(job_page).find('#authentication').hide();
+	       	$(job_page).find('#logoffEvt').hide();
+
 
          	$(job_page).find('#loadEvt').click(function(evt) {
   				  console.log('In event load');
@@ -25,6 +29,44 @@ jobController = function() {
 		  			$(job_page).find('#recommendation').slideToggle("slow");
 
   				});
+
+        	$(job_page).find('#logonEvt').click(function(evt) {
+  				  console.log('In event logon');
+	  				evt.preventDefault();
+		  			$(job_page).find('#authentication').slideToggle("slow");
+
+  				});
+
+
+        	$(job_page).find('#logoffEvt').click(function(evt) {
+  				  console.log('In event logoff');
+	  				evt.preventDefault();
+		  			$(job_page).find('#logonEvt').show();
+            $(job_page).find('#logoffEvt').hide();
+            logged_on = false;
+  				});
+
+  				$(job_page).find('#authButton').click(function(evt) {
+  				  console.log('In logon');
+  				  var usr = $(job_page).find('#username').val();
+  				  var pwd = $(job_page).find('#password').val();
+  				  $.post("/_session", {
+  				    name : usr,
+  				    password : pwd
+  				  }, function(data, status){
+  				    // Mod to add in setting the cookie
+              console.log("Data: " + data + "\nStatus: " + status);
+            });
+
+  				  logged_on = true;
+
+	       	  $(job_page).find('#authentication').hide();
+		  			$(job_page).find('#logonEvt').hide();
+            $(job_page).find('#logoffEvt').show();
+
+  				});
+
+
 
          $('#importFile').change(loadFromHTML);
          initialised = true;
