@@ -58,6 +58,38 @@
 
 
     <section>
+      <div id="history-form" class="jumbotron">
+        <h3>Select program details to be displayed</h3>
+        <div class="row form-group">
+          <span class="col-sm-6">
+      	    <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" name="startDate" class="form-control" />
+          </span>
+          <span class="col-sm-6">
+      	    <label for="endDate">End Date</label>
+            <input type="date" id="endDate" name="endDate" class="form-control" />
+          </span>
+        </div>
+        <div class="row form-group">
+          <span class="col-sm-6">
+            <label for="program_name">Program</label>
+            <input list="program-names" name="program-name"/>
+            <datalist id="program-names">
+              <option value="prog1"/>
+            </datalist>
+
+          </span>
+          <span class="col-sm-3">
+            <button type="button" class="btn btn-primary" id="historyButton">Load</button>
+          </span>
+          <span class="col-sm-3">&nbsp;</span>
+        </div>
+      </div>
+      </div>
+    </section>
+
+
+    <section>
       <div id="recommendation">
         <ul class="nav nav-tabs" role="tablist">
           <li class="active"><a href="#">DB items</a></li>

@@ -14,6 +14,7 @@ jobController = function() {
 	       	$(job_page).find('#recommendation').hide();
 	       	$(job_page).find('#authentication').hide();
 	       	$(job_page).find('#logoffEvt').hide();
+	       	$(job_page).find('#history-form').hide();
 
 
          	$(job_page).find('#loadEvt').click(function(evt) {
@@ -21,6 +22,12 @@ jobController = function() {
 	  				evt.preventDefault();
 		  			$(job_page).find('#load').slideToggle("slow");
 
+  				});
+
+  				$(job_page).find('#historyEvt').click(function(evt) {
+  				  console.log('In history event');
+  				  evt.preventDefault();
+  				  (job_page).find('#history-form').slideToggle("slow");
   				});
 
         	$(job_page).find('#recommendationEvt').click(function(evt) {
@@ -71,10 +78,8 @@ jobController = function() {
     				    password : pwd
   	  			  },
   	  			  success: function(data, status, jqXHR){
-  	  			    // Mod to add in setting the cookie
                 console.log("Data: " + data + "\nStatus: " + status);
                 auth_token = jqXHR.getResponseHeader("AuthSession");
-                document.cookie="AuthSession="+auth_token;
               },
               error: function(data,status) {
                 console.log("Error! "+ data + "\nStatus: " + status)
