@@ -12,6 +12,7 @@ jobController = function() {
 	       fetch_job_types();
 
           hide_all(job_page);
+          $(job_page).find('#logoffEvt').hide();
 
          	$(job_page).find('#loadEvt').click(function(evt) {
   				  console.log('In event load');
@@ -156,7 +157,6 @@ function hide_all(job_page){
   $(job_page).find('#load').hide();
  	$(job_page).find('#recommendation').hide();
  	$(job_page).find('#authentication').hide();
- 	$(job_page).find('#logoffEvt').hide();
  	$(job_page).find('#history-form').hide();
 
 }
