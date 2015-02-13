@@ -256,9 +256,10 @@ function upload(data) {
 	var col = [];
 	var field_names = [];
 	var lines = data;
+	var job_list = [];
 
 	console.log(lines[0]);
-	for (var l in lines) {
+	for (var l=0; l<lines.length; l++) {
 		if (lines[l].trim().length < 1) {
 			continue;
 		}
@@ -326,23 +327,33 @@ function upload(data) {
 		        job.type = "JobRecord";
 		        job.structure = "v0.1";
 
+		        job_list.push(job);
 
-			$.ajax({
-				url: upload_url,
+
+		}
+	}
+
+  var upload_list = { docs : job_list};
+
+  //console.log(JSON.stringify(upload));
+
+	$.ajax({
+				url: "/jobs/_bulk_docs",
 				type: "POST",
-				data: JSON.stringify(job),
+				data: JSON.stringify(upload_list),
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
 				success: function() {
-					console.log("Uploaded: " + job['Jobname']);
-				}
+					console.log("Uploaded: ");
+				},
+				error: function(data,status) {
+            console.log("Error! "+ data + "\nStatus: " + status)
+        }
 
 			});
-		}
-	}
+
+
 	return col;
-
-
 
 }
 
