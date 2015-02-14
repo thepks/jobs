@@ -9,7 +9,7 @@ jobController = function() {
    return {
       init:function(page) {
          job_page = page;
-	       fetch_job_types();
+//	       fetch_job_types();
 
           hide_all(job_page);
           $(job_page).find('#logoffEvt').hide();
@@ -21,6 +21,7 @@ jobController = function() {
 		  			$(job_page).find('#load').show();
 
   				});
+
 
   				$(job_page).find('#historyEvt').click(function(evt) {
   				  console.log('In history event');
@@ -165,7 +166,7 @@ function loadFromHTML(event){
    var reader = new FileReader();
    reader.onload = function(evt) {
       var parsed_lines = parse_html(evt.target.result);
-      var a = upload(parsed_lines);
+      uploadAsUser(parsed_lines);
 
    };
 
@@ -177,6 +178,26 @@ function loadFromHTML(event){
    reader.readAsText(event.target.files[0]);
 
 }
+
+function uploadAsUser(parsed_lines){
+  var usr;
+
+  $.get("/_session",function(data,status) {
+  console.log("Data " + data);
+  var res = JSON.parse(data);
+
+  upload(parsed_lines,res.userCtx.name);
+
+
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    console.log('Error! ' + errorThrown);
+    return "Anom";
+  });
+
+
+}
+
+
 
 function parse_html(data) {
 
@@ -220,7 +241,7 @@ function parse_html(data) {
 
 }
 
-function upload(data) {
+function upload(data, username) {
    var upload_url = '/jobs';
    var options = {
      hostname: '127.0.0.1',
@@ -232,6 +253,8 @@ function upload(data) {
      }
 
    };
+
+  console.log(username);
 
    var config = {
 	"job_field" : "1",
@@ -326,6 +349,7 @@ function upload(data) {
 //			console.log(job);
 		        job.type = "JobRecord";
 		        job.structure = "v0.1";
+		        job.owner = username;
 
 		        job_list.push(job);
 
