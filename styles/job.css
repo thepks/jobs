@@ -17,3 +17,8 @@ section {
   color: red;
 }
 
+.load-results {
+  display: none;
+  color: red;
+}
+

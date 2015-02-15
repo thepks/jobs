@@ -164,6 +164,10 @@ function hide_all(job_page){
 
 function loadFromHTML(event){
    var reader = new FileReader();
+
+   $('#load-feedback').text("Loading ...");
+   $('#load-feedback').show();
+
    reader.onload = function(evt) {
       var parsed_lines = parse_html(evt.target.result);
       uploadAsUser(parsed_lines);
@@ -172,6 +176,13 @@ function loadFromHTML(event){
 
    reader.onerror = function(evt) {
       errorLogger("cannot_read_file","The file specified cannot be read");
+
+      $('#load-feedback').text("The file specified cannot be read");
+
+      setTimeout(function(){
+    				      $('#load-feedback').hide();
+    				    },2000);
+
    };
 
    console.log('About to read');
@@ -191,7 +202,12 @@ function uploadAsUser(parsed_lines){
 
   }).fail(function(jqXHR, textStatus, errorThrown) {
     console.log('Error! ' + errorThrown);
-    return "Anom";
+
+      $('#load-feedback').text("Please logon to upload");
+
+      setTimeout(function(){
+    				      $('#load-feedback').hide();
+    				    },5000);
   });
 
 
@@ -369,10 +385,22 @@ function upload(data, username) {
 				dataType: "json",
 				success: function() {
 					console.log("Uploaded: ");
-				},
+
+          $('#load-feedback').text("Upload completed");
+
+          setTimeout(function(){
+        				      $('#load-feedback').hide();
+        				    },5000);
+    				},
 				error: function(data,status) {
             console.log("Error! "+ data + "\nStatus: " + status)
-        }
+
+            $('#load-feedback').text("Upload failed!");
+
+            setTimeout(function(){
+          				      $('#load-feedback').hide();
+          				    },5000);
+              }
 
 			});
 
