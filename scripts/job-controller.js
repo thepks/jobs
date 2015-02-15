@@ -111,6 +111,7 @@ jobController = function() {
   				  console.log('In logon');
   				  var usr = $(job_page).find('#username').val();
   				  var pwd = $(job_page).find('#password').val();
+  				  var jname = [];
   				  $.ajax({
   				    type: "POST",
   				    url: "/_session",
@@ -126,6 +127,7 @@ jobController = function() {
                 $(job_page).find('#logoffEvt').show();
                 hide_all(job_page);
                 logged_on = true;
+                fetch_job_types();
               },
               error: function(data,status) {
                 console.log("Error! "+ data + "\nStatus: " + status)
@@ -412,17 +414,48 @@ function upload(data, username) {
 
 function fetch_job_types() {
 
-   var url = '/jobs/_design/dir/_view/mass_job_types';
-                        $.ajax({
-                                url: url,
-                                type: "GET",
-                                contentType: "application/json; charset=utf-8",
-                                dataType: "json",
-                                success: function(data) {
-                                        console.log("Fetched: " + data);
-                                }
+   var url = '/jobs/_design/job_details/_view/owner?group=true&level=exact&';
+   var res;
+   var usr;
+   var job_list_data = {};
+   var job_names = [];
 
-                        });
+    $.get("/_session",function(data,status) {
+      console.log("Data " + data);
+      res = JSON.parse(data);
+      usr = res.userCtx.name;
+
+      url = url +"startkey=[\""+usr+"\"]&endkey=[\""+usr+"\u9999\"]";
+
+      $.ajax({
+              url: url,
+              type: "GET",
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              success: function(data, status, jqXHR) {
+
+
+                $('#program-names').empty();
+
+                console.log("Fetched: " + data);
+                for (var q=0; q<data.rows.length; q++) {
+                  $('#program-names').append("<option value='" +data.rows[q].key[1]+"'></option>");
+                }
+
+
+              }
+
+             });
+
+
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      console.log('Error! ' + errorThrown);
+
+    });
+
+    return job_names;
+
+
 }
 
 
