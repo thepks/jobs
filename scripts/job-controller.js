@@ -35,6 +35,52 @@ jobController = function() {
   				  analysis_type = 1;
   				});
 
+
+          $(job_page).find('#analysis-button').click(function(evt) {
+            var from_date;
+            var to_date;
+            var program_name;
+            var func;
+
+            evt.preventDefault();
+            from_date = (job_page).find('#startDate').val();
+            to_date = (job_page).find('#endDate').val();
+            func = (job_page).find('#analysis-button').val();
+            program_name = (job_page).find('#program-name').val();
+            console.log('In action performing');
+
+            switch (func) {
+              case '1' :
+
+                   var url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
+
+
+                   url = url+'&startkey=[\"'+program_name+'\",\"'+from_date+'\"]';
+                   url = url+'&endkey=[\"'+program_name+'\",\"'+to_date+'\u9999\"]';
+
+                   $.ajax({
+                            url: url,
+                            type: "GET",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function(data, status, jqXHR) {
+
+
+                              console.log("Fetched: " + data);
+
+
+
+                            }
+
+                           });
+
+                   break;
+
+
+            }
+
+          });
+
   				$(job_page).find('#variabilityEvt').click(function(evt) {
   				  console.log('In variability event');
   				  evt.preventDefault();
@@ -161,6 +207,7 @@ function hide_all(job_page){
  	$(job_page).find('#recommendation').hide();
  	$(job_page).find('#authentication').hide();
  	$(job_page).find('#history-form').hide();
+ 	$(job_page).find('#summary-results').hide();
 
 }
 
@@ -390,6 +437,8 @@ function upload(data, username) {
 
           $('#load-feedback').text("Upload completed");
 
+          fetch_job_types();
+
           setTimeout(function(){
         				      $('#load-feedback').hide();
         				    },5000);
@@ -414,46 +463,42 @@ function upload(data, username) {
 
 function fetch_job_types() {
 
-   var url = '/jobs/_design/job_details/_view/owner?group=true&level=exact&';
+   var url = '/jobs/_design/job_details/_list/byuser/owner?group=true&level=exact';
    var res;
    var usr;
    var job_list_data = {};
    var job_names = [];
+   var duplist = [];
+   var deduplist = [];
 
-    $.get("/_session",function(data,status) {
-      console.log("Data " + data);
-      res = JSON.parse(data);
-      usr = res.userCtx.name;
-
-      url = url +"startkey=[\""+usr+"\"]&endkey=[\""+usr+"\u9999\"]";
-
-      $.ajax({
-              url: url,
-              type: "GET",
-              contentType: "application/json; charset=utf-8",
-              dataType: "json",
-              success: function(data, status, jqXHR) {
+    $.ajax({
+            url: url,
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data, status, jqXHR) {
 
 
-                $('#program-names').empty();
+              $('#program-names').empty();
 
-                console.log("Fetched: " + data);
-                for (var q=0; q<data.rows.length; q++) {
-                  $('#program-names').append("<option value='" +data.rows[q].key[1]+"'></option>");
-                }
+              console.log("Fetched: " + data);
 
+              duplist = data.rows.map(function(a) {return a.key[0];});
 
+              deduplist = duplist.reduce(function(a,b){
+                if (a.indexOf(b) < 0 ) {a.push(b)};
+                return a;
+                },[]);
+
+              for (var q=0; q<deduplist.length; q++) {
+                $('#program-names').append("<option value='" +deduplist[q]+"'></option>");
               }
 
-             });
 
+            }
 
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-      console.log('Error! ' + errorThrown);
+           });
 
-    });
-
-    return job_names;
 
 
 }

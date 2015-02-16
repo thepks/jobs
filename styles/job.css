@@ -22,3 +22,6 @@ section {
   color: red;
 }
 
+.summary-results{
+  display:none;
+}
