@@ -12,9 +12,13 @@ jobController = function() {
       init:function(page) {
          job_page = page;
          self = this;
+
+
+
 //	       fetch_job_types();
 
           self.hide_all();
+
           $(job_page).find('#logoffEvt').hide();
 
          	$(job_page).find('#loadEvt').click(function(evt) {
@@ -71,6 +75,9 @@ jobController = function() {
 
                               console.log("Fetched: " + data);
 
+                              history_graph.init(job_page,data,'summary-results');
+                              history_graph.register();
+
 
 
                             }
@@ -94,6 +101,8 @@ jobController = function() {
   				  (job_page).find('#analysis-button').text('Display Variability');
   				  (job_page).find('#analysis-button').val('2');
   				  analysis_type = 2;
+
+
   				});
 
   				$(job_page).find('#degradationEvt').click(function(evt) {
@@ -201,6 +210,9 @@ jobController = function() {
          initialised = true;
          console.log('Initialised job-controller');
       },
+
+
+      // hide all page sections for clean display
 
       hide_all:function(){
 
@@ -499,14 +511,100 @@ jobController = function() {
 
 
 
-
-
-
    }
 }();
 
 
+history_graph = function () {
 
+  var res_data;
+  var job_page;
+  var self;
+  var dom_id;
+
+  return {
+    init : function (page, raw_data, id) {
+
+      self = this;
+      res_data = raw_data;
+      job_page = page;
+      dom_id = id;
+
+    },
+
+    reset_data : function(raw_data) {
+      res_data = raw_data;
+    },
+
+
+    register : function () {
+    // Load the Visualization API and the piechart package.
+        google.load('visualization', '1.0', {'packages':['corechart'], 'callback' : function () {self.draw_graph();}});
+
+    },
+
+    draw_graph : function() {
+      console.log("Draw history graph");
+            // Create the data table.
+      var data = new google.visualization.DataTable();
+      data.addColumn('datetime','Date');
+      data.addColumn('number','Avg Duration (s)');
+/*      data.addColumn({ id:'i0', type:'number',role:'interval'});
+      data.addColumn({id:'i1', type:'number',role:'interval'});
+      data.addColumn({id:'i2', type:'number',role:'interval'});
+      data.addColumn({id:'i2', type:'number',role:'interval'});
+      data.addColumn({id:'i2', type:'number',role:'interval'});
+*/
+      for (var i=0; i<res_data.rows.length ;i++) {
+
+        var avg = res_data.rows[i].value.sum/res_data.rows[i].value.count;
+        var stddev = Math.sqrt(res_data.rows[i].value.sumsqr / res_data.rows[i].value.count);
+        var lowval = avg - stddev;
+        var highval = avg + stddev;
+
+        var new_row = [];
+        new_row = [
+          new Date(res_data.rows[i].key[1]),
+          avg];
+/*
+          ,
+          res_data.rows[i].value.min,
+          res_data.rows[i].value.max,
+          res_data.rows[i].value.sum,
+          lowval,
+          highval
+          ];
+  */
+
+        data.addRow( new_row );
+
+      }
+
+
+      // Set chart options
+      var options_lines = {
+        width: 1000,
+        height: 563,
+        hAxis: {
+          title: 'Date',
+          format: 'dd.mm',
+          gridlines: {count: 10}
+        },
+        vAxis: {
+          title: 'Duration (s)'
+        }
+      };
+
+      var chart_lines = new google.visualization.ColumnChart(document.getElementById(dom_id));
+      chart_lines.draw(data, options_lines);
+      $(job_page).find('#'+dom_id).show();
+
+    },
+
+  }
+
+
+}();
 
 
 
