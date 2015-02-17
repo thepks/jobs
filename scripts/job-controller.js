@@ -546,40 +546,41 @@ history_graph = function () {
     draw_graph : function() {
       console.log("Draw history graph");
             // Create the data table.
-      var data = new google.visualization.DataTable();
-      data.addColumn('datetime','Date');
-      data.addColumn('number','Avg Duration (s)');
-/*      data.addColumn({ id:'i0', type:'number',role:'interval'});
-      data.addColumn({id:'i1', type:'number',role:'interval'});
-      data.addColumn({id:'i2', type:'number',role:'interval'});
-      data.addColumn({id:'i2', type:'number',role:'interval'});
-      data.addColumn({id:'i2', type:'number',role:'interval'});
-*/
+
+      var data_rows = [];
+
       for (var i=0; i<res_data.rows.length ;i++) {
 
-        var avg = res_data.rows[i].value.sum/res_data.rows[i].value.count;
-        var stddev = Math.sqrt(res_data.rows[i].value.sumsqr / res_data.rows[i].value.count);
-        var lowval = avg - stddev;
-        var highval = avg + stddev;
+        var count = res_data.rows[i].value.count;
+        var avg = res_data.rows[i].value.sum/count;
+        var stddev;
+        var lowval;
+        var highval;
+
+
+        if (count > 1) {
+          stddev = Math.sqrt((res_data.rows[i].value.sumsqr - (res_data.rows[i].value.sum * res_data.rows[i].value.sum / count))/(count-1));
+          lowval = avg - stddev;
+          highval = avg + stddev;
+        } else {
+          lowval = res_data.rows[i].value.min;
+          highval = res_data.rows[i].value.max;
+        }
 
         var new_row = [];
         new_row = [
-          new Date(res_data.rows[i].key[1]),
-          avg];
-/*
-          ,
+          new Date(res_data.rows[i].key[1].slice(0,10)),
           res_data.rows[i].value.min,
-          res_data.rows[i].value.max,
-          res_data.rows[i].value.sum,
           lowval,
-          highval
-          ];
-  */
+          highval,
+          res_data.rows[i].value.max];
 
-        data.addRow( new_row );
+        data_rows.push( new_row );
 
       }
 
+
+    var data = google.visualization.arrayToDataTable(data_rows, true);
 
       // Set chart options
       var options_lines = {
@@ -587,15 +588,16 @@ history_graph = function () {
         height: 563,
         hAxis: {
           title: 'Date',
-          format: 'dd.mm',
+          format: 'dd.MM.yy',
           gridlines: {count: 10}
         },
         vAxis: {
-          title: 'Duration (s)'
-        }
+          title: 'Time (s)'
+        },
+        legend:'none'
       };
 
-      var chart_lines = new google.visualization.ColumnChart(document.getElementById(dom_id));
+      var chart_lines = new google.visualization.CandlestickChart(document.getElementById(dom_id));
       chart_lines.draw(data, options_lines);
       $(job_page).find('#'+dom_id).show();
 
