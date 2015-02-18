@@ -25,3 +25,7 @@ section {
 .summary-results{
   display:none;
 }
+
+.jobpage-about {
+  display: none;
+}

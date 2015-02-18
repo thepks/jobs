@@ -29,16 +29,28 @@ jobController = function() {
 
   				});
 
+	        $(job_page).find('#aboutEvt').click(function(evt) {
+  				  console.log('In About event');
+  				  evt.preventDefault();
+  				  self.hide_all();
+  				  $(job_page).find('#about').show();
+  				});
+
+	        $(job_page).find('#homeEvt').click(function(evt) {
+  				  console.log('In home event');
+  				  evt.preventDefault();
+  				  self.hide_all();
+  				});
 
   				$(job_page).find('#historyEvt').click(function(evt) {
   				  console.log('In history event');
   				  evt.preventDefault();
   				  self.hide_all();
-  				  (job_page).find('#program-sect').show();
-  				  (job_page).find('#history-form').show();
-  				  (job_page).find('#history-form-title').text('Select program details to be displayed');
-  				  (job_page).find('#analysis-button').text('Display History');
-  				  (job_page).find('#analysis-button').val('1');
+  				  $(job_page).find('#program-sect').show();
+  				  $(job_page).find('#history-form').show();
+  				  $(job_page).find('#history-form-title').text('Select program details to be displayed');
+  				  $(job_page).find('#analysis-button').text('Display History');
+  				  $(job_page).find('#analysis-button').val('1');
   				  analysis_type = 1;
   				});
 
@@ -95,11 +107,11 @@ jobController = function() {
   				  console.log('In variability event');
   				  evt.preventDefault();
   				  self.hide_all();
-  				  (job_page).find('#program-sect').hide();
-  				  (job_page).find('#history-form').show();
-  				  (job_page).find('#history-form-title').text('Select duration for variability analysis');
-  				  (job_page).find('#analysis-button').text('Display Variability');
-  				  (job_page).find('#analysis-button').val('2');
+  				  $(job_page).find('#program-sect').hide();
+  				  $(job_page).find('#history-form').show();
+  				  $(job_page).find('#history-form-title').text('Select duration for variability analysis');
+  				  $(job_page).find('#analysis-button').text('Display Variability');
+  				  $(job_page).find('#analysis-button').val('2');
   				  analysis_type = 2;
 
 
@@ -109,11 +121,11 @@ jobController = function() {
   				  console.log('In degradation event');
   				  evt.preventDefault();
   				  self.hide_all();
-  				  (job_page).find('#program-sect').hide();
-  				  (job_page).find('#history-form').show();
-  				  (job_page).find('#history-form-title').text('Select duration for degradation analysis');
-  				  (job_page).find('#analysis-button').text('Display Degradation');
-  				  (job_page).find('#analysis-button').val('3');
+  				  $(job_page).find('#program-sect').hide();
+  				  $(job_page).find('#history-form').show();
+  				  $(job_page).find('#history-form-title').text('Select duration for degradation analysis');
+  				  $(job_page).find('#analysis-button').text('Display Degradation');
+  				  $(job_page).find('#analysis-button').val('3');
   				  analysis_type = 3;
   				});
 
@@ -123,11 +135,11 @@ jobController = function() {
 	  				evt.preventDefault();
 	  				self.hide_all();
 
-  				  (job_page).find('#program-sect').hide();
-  				  (job_page).find('#history-form').show();
-  				  (job_page).find('#history-form-title').text('Select duration for recommendation analysis');
-  				  (job_page).find('#analysis-button').text('Display Recommendations');
-  				  (job_page).find('#analysis-button').val('4');
+  				  $(job_page).find('#program-sect').hide();
+  				  $(job_page).find('#history-form').show();
+  				  $(job_page).find('#history-form-title').text('Select duration for recommendation analysis');
+  				  $(job_page).find('#analysis-button').text('Display Recommendations');
+  				  $(job_page).find('#analysis-button').val('4');
   				  analysis_type = 4;
 
 		  			$(job_page).find('#recommendation').show();
@@ -221,7 +233,7 @@ jobController = function() {
        	$(job_page).find('#authentication').hide();
        	$(job_page).find('#history-form').hide();
        	$(job_page).find('#summary-results').hide();
-
+        $(job_page).find('#about').hide();
         },
 
 

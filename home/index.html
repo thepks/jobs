@@ -10,7 +10,7 @@
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript">
-    google.load('visualization', '1.0', {'packages':['corechart'], 'callback' : function () {console.log('loaded google');}});
+    google.load('visualization', '1.0', {'packages':['corechart'], 'callback' : function () {console.log('loaded google charts');}});
   </script>
   <script src="../scripts/job-controller.js"></script>
 </head>
@@ -23,11 +23,11 @@
     <nav class="navbar navbar-inverse">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">Job Analysis</a>
+          <a class="navbar-brand" href="#" id="aboutEvt">Job Analysis</a>
         </div>
         <div>
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
+            <li class="active"><a href="#" id="homeEvt">Home</a></li>
             <li><a href="#" id="loadEvt">Load</a></li>
             <li><a href="#" id="historyEvt">History</a></li>
             <li><a href="#" id="variabilityEvt">Variability</a></li>
@@ -43,6 +43,14 @@
       </div>
     </nav>
 
+   <section id="about" class="jobpage-about">
+     <div class="jumbotron">
+       <h3>Job Analysis</h3>
+       <p>Use this site to upload and review performance of jobs.</p>
+       <p>The load function takes the mailed spool output from job /ssa/btc in html format.</p>
+       <p>Standard users are only able to see details for jobs that they have uploaded.</p>
+     </div>
+   </section>
 
    <section id="job">
       <form role="form" id="jobForm">
