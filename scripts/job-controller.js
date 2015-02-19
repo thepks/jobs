@@ -98,6 +98,28 @@ jobController = function() {
 
                    break;
 
+                case '2' :
+
+                  var url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&group_level=1';
+                  url = url+'&startkey=[\"A\",\"'+from_date+'\"]';
+                  url = url+'&endkey=[\"\u9999\",\"'+to_date+'\u9999\"]';
+
+                  $.ajax({
+                            url: url,
+                            type: "GET",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function(data, status, jqXHR) {
+
+
+                            console.log("Fetched: " + JSON.stringify(data));
+                            history_graph.init(job_page,data,'summary-results');
+                            history_graph.register_variability_chart();
+
+                            }
+                  });
+                  break;
+
 
             }
 
@@ -550,8 +572,14 @@ history_graph = function () {
 
 
     register : function () {
-    // Load the Visualization API and the piechart package.
+    // Load the Visualization API and the core package.
         google.load('visualization', '1.0', {'packages':['corechart'], 'callback' : function () {self.draw_graph();}});
+
+    },
+
+    register_variability_chart : function () {
+
+      google.load('visualization', '1.0', {'packages':['corechart'], 'callback' : function () {self.draw_variability_graph();}});
 
     },
 
@@ -614,6 +642,66 @@ history_graph = function () {
       $(job_page).find('#'+dom_id).show();
 
     },
+
+    draw_variability_graph : function() {
+      console.log("Draw variability graph");
+            // Create the data table.
+
+      var data_rows = [];
+
+      for (var i=0; i<res_data.rows.length ;i++) {
+
+        var count = res_data.rows[i].value.count;
+        var avg = res_data.rows[i].value.sum/count;
+        var stddev;
+        var lowval;
+        var highval;
+
+
+        if (count > 1) {
+          stddev = Math.sqrt((res_data.rows[i].value.sumsqr - (res_data.rows[i].value.sum * res_data.rows[i].value.sum / count))/(count-1));
+          lowval = avg - stddev;
+          highval = avg + stddev;
+        } else {
+          lowval = res_data.rows[i].value.min;
+          highval = res_data.rows[i].value.max;
+        }
+
+        var new_row = [];
+        new_row = [
+          res_data.rows[i].key[0],
+          res_data.rows[i].value.min,
+          lowval,
+          highval,
+          res_data.rows[i].value.max];
+
+        data_rows.push( new_row );
+
+      }
+
+
+    var data = google.visualization.arrayToDataTable(data_rows, true);
+
+      // Set chart options
+      var options_lines = {
+        width: 1000,
+        height: 563,
+        hAxis: {
+          title: 'Program',
+          gridlines: {count: 10}
+        },
+        vAxis: {
+          title: 'Time (s)'
+        },
+        legend:'none'
+      };
+
+      var chart_lines = new google.visualization.CandlestickChart(document.getElementById(dom_id));
+      chart_lines.draw(data, options_lines);
+      $(job_page).find('#'+dom_id).show();
+
+    }
+
 
   }
 
