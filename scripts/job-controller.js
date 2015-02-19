@@ -104,7 +104,7 @@ jobController = function() {
                             url: url,
                             type: "GET",
                             contentType: "application/json; charset=utf-8",
-                            dataType: "json"});,
+                            dataType: "json"});
 
                         promise_func2.done(function(data) {
                                 console.log("Fetched: " + JSON.stringify(data));
@@ -202,7 +202,7 @@ jobController = function() {
                 var jname = [];
                 var promise_logon;
 
-                promise.logon = $.ajax({
+                promise_logon = $.ajax({
                     type: "POST",
                     url: "/_session",
                     data: {
@@ -210,7 +210,7 @@ jobController = function() {
                         password: pwd
                     }
                 });
-                promise.done(function(data, status, jqXHR) {
+                promise_logon.done(function(data, status, jqXHR) {
                         console.log("Data: " + data + "\nStatus: " + status);
                         auth_token = jqXHR.getResponseHeader("AuthSession");
                         $(job_page).find('#authentication').hide();
@@ -221,7 +221,7 @@ jobController = function() {
                         logged_on = true;
                         self.fetch_job_types();
                     });
-                promise.fail(function(data, status) {
+                promise_logon.fail(function(data, status) {
                         console.log("Error! " + data + "\nStatus: " + status);
 
                         $(job_page).find('#auth-results').show();
