@@ -297,7 +297,7 @@ jobController = function() {
 
             promise_jobtypes.done(function(data, status, jqXHR) {
                     $(job_page).find('#program-names').empty();
-
+                    $(job_page).find('#program-name').val('');
                     console.log("Fetched: " + data);
 
                     duplist = data.rows.map(function(a) {
