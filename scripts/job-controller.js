@@ -74,23 +74,35 @@ jobController = function() {
                 switch (func) {
                     case '1':
 
-                        url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
+                        if (program_name.length < 1 || program_name === 'Please logon') {
+
+                          $(job_page).find('#form-val-message').show();
+
+                          setTimeout(function() {
+                              $(job_page).find('#form-val-message').hide();
+                          }, 3000);
 
 
-                        url = url + '&startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
-                        url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
+                        } else {
 
-                        promise_func1 = $.ajax({
-                            url: url,
-                            type: "GET",
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json"});
+                          url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
 
-                        promise_func1.done(function(data) {
-                                console.log("Fetched: " + data);
-                                history_graph.init(job_page, data, 'summary-results');
-                                history_graph.register();
-                            });
+
+                          url = url + '&startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
+                          url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
+
+                          promise_func1 = $.ajax({
+                              url: url,
+                              type: "GET",
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json"});
+
+                          promise_func1.done(function(data) {
+                                  console.log("Fetched: " + data);
+                                  history_graph.init(job_page, data, 'summary-results');
+                                  history_graph.register();
+                              });
+                        }
 
                         break;
 
@@ -186,6 +198,9 @@ jobController = function() {
                 promise_logoff.done(function(data, status, jqXHR) {
                         // Mod to add in setting the cookie
                         console.log("Data: " + data + "\nStatus: " + status);
+                        $(job_page).find('#program-names').empty();
+                        $(job_page).find('#program-names').append("<option value='Please logon'></option>");
+
                     });
                 promise_logoff.fail(function(data, status) {
                         console.log("Error! " + data + "\nStatus: " + status);
@@ -219,6 +234,10 @@ jobController = function() {
 
                         self.hide_all();
                         logged_on = true;
+
+                        $(job_page).find('#program-names').empty();
+                        $(job_page).find('#program-names').append("<option value='Please wait, loading'></option>");
+
                         self.fetch_job_types();
                     });
                 promise_logon.fail(function(data, status) {

@@ -29,3 +29,8 @@ section {
 .jobpage-about {
   display: none;
 }
+
+.form-val-message {
+  display: none;
+  color: red;
+}
