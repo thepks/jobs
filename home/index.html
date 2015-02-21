@@ -10,7 +10,7 @@
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript">
-    google.load('visualization', '1.0', {'packages':['corechart'], 'callback' : function () {console.log('loaded google charts');}});
+    google.load('visualization', '1.0', {'packages':['corechart', 'table'], 'callback' : function () {console.log('loaded google charts');}});
   </script>
   <script src="../scripts/job-controller.js"></script>
 </head>
@@ -107,12 +107,11 @@
     <section>
       <div id="recommendation">
         <ul class="nav nav-tabs" role="tablist">
-          <li class="active"><a href="#">DB items</a></li>
-          <li><a href="#">ABAP items</a></li>
-          <li><a href="#">Interval Items</a></li>
-          <li><a href="#">Duration</a></li>
-          <li><a href="#">Cancelled</a></li>
-          <li><a href="#">Help</a></li>
+          <li class="active"><a href="#" id="db=items">DB items</a></li>
+          <li><a href="#" id="abap-items">ABAP items</a></li>
+          <li><a href="#" id="interval-items">Interval Items</a></li>
+          <li><a href="#" id="duration-items">Duration</a></li>
+          <li><a href="#" id="cancelled-items">Cancelled</a></li>
         </ul>
       </div>
     </section>

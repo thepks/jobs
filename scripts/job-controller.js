@@ -174,6 +174,14 @@ jobController = function() {
 
             });
 
+
+            $(job_page).find('#cancelled-items').click(function(evt) {
+
+              var promise_cancel;
+              evt.preventDefault();
+
+            });
+
             $(job_page).find('#logonEvt').click(function(evt) {
                 console.log('In event logon');
                 evt.preventDefault();

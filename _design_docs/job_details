@@ -1,14 +1,18 @@
 {
    "_id": "_design/job_details",
-   "_rev": "13-7bb3bb06283caac673c7dc470c83cf37",
+   "_rev": "50-70e9793a8d5750be24575b7318108fef",
    "language": "javascript",
    "views": {
        "owner": {
            "map": "function(doc) {\n  if (doc.owner && doc.Jobname) {\n    if (doc.Progname === \"RFKK_MASS_ACT_SINGLE_JOB\") {\n       var underposn = doc.Jobname.lastIndexOf(\"_\"); \n        var job = doc.Jobname.slice(0,underposn);\n\tvar short_job = job.slice(0,4)+\"_\"+job.slice(12); \n        emit([short_job, doc.owner], doc.Strtdate);\n    } else {\n  \temit([doc.Progname, doc.owner], doc.Strtdate);\n    }\n  }\n}",
            "reduce": "_count"
+       },
+       "server": {
+           "map": "function(doc) {\n  var intervals = [];\n  var sdt, edt;\n  var sdt5; \n  var val = {};\n\n  if (doc.Strttime && doc.owner && doc.Endtime) {\n  \tsdt = new Date(doc.Strttime);\n\tsdt5 = new Date(Math.floor(sdt.getTime()/60000)*60000);\t\n\tedt = new Date(doc.Endtime);\n\n\twhile (sdt5 < edt) {\n\t\tintervals.push (new Date(sdt5));\n\t\tsdt5 = new Date(sdt5.getTime() + 60000);\n\t}\n\n//\tval = { server : doc.Server, WP : doc.WP, timeslots : intervals };\n\n\t\n\temit( [doc.Progname, doc.Strtdate, doc.owner],intervals);\n  }\n\n}"
        }
    },
    "lists": {
-       "byuser": "function(head,req) { var results = []; var row; var roles = req.userCtx.roles; var admi = false; var requester = req.userCtx.name; for (var v=0;v<roles.length;v++) { if(roles[v] === \"_admin\" || roles[v] === \"jobadmin\"){admi=true;}} while(row=getRow()) {var user = row.key[1]; if(admi||user === requester) {results.push(row); } } var res = {}; res.rows = results; send(JSON.stringify(res)); }"
+       "byuser": "function(head,req) { var results = []; var row; var roles = req.userCtx.roles; var admi = false; var requester = req.userCtx.name; for (var v=0;v<roles.length;v++) { if(roles[v] === \"_admin\" || roles[v] === \"jobadmin\"){admi=true;}} while(row=getRow()) {var user = row.key[1]; if(admi||user === requester) {results.push(row); } } var res = {}; res.rows = results; send(JSON.stringify(res)); }",
+       "parallel_calls": "function(head, req) { var intervals = {}; var row; while (row = getRow()) { var values = row.value; var key = row.key; log(key); log(values); values.forEach(function(value) { if (!intervals[key]) { intervals[key] = {}; } if (intervals[key][value]) { intervals[key][value] ++; } else { intervals[key][value] = 1; } }); } var res = {}; for (var key_togo in intervals) { res.key = key_togo; res.value = intervals[key_togo]; } send(JSON.stringify(res)); }"
    }
 }
