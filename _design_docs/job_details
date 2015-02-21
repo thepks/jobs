@@ -1,6 +1,6 @@
 {
    "_id": "_design/job_details",
-   "_rev": "50-70e9793a8d5750be24575b7318108fef",
+   "_rev": "51-98877dcffb15b2394bba5fd9a57672f2",
    "language": "javascript",
    "views": {
        "owner": {
@@ -8,7 +8,7 @@
            "reduce": "_count"
        },
        "server": {
-           "map": "function(doc) {\n  var intervals = [];\n  var sdt, edt;\n  var sdt5; \n  var val = {};\n\n  if (doc.Strttime && doc.owner && doc.Endtime) {\n  \tsdt = new Date(doc.Strttime);\n\tsdt5 = new Date(Math.floor(sdt.getTime()/60000)*60000);\t\n\tedt = new Date(doc.Endtime);\n\n\twhile (sdt5 < edt) {\n\t\tintervals.push (new Date(sdt5));\n\t\tsdt5 = new Date(sdt5.getTime() + 60000);\n\t}\n\n//\tval = { server : doc.Server, WP : doc.WP, timeslots : intervals };\n\n\t\n\temit( [doc.Progname, doc.Strtdate, doc.owner],intervals);\n  }\n\n}"
+           "map": "function(doc) {\n  var intervals = [];\n  var sdt, edt;\n  var sdt5; \n  var val = {};\nvar shortname;\n\n  if (doc.Strttime && doc.owner && doc.Endtime) {\n  \tsdt = new Date(doc.Strttime);\n\tsdt5 = new Date(Math.floor(sdt.getTime()/60000)*60000);\t\n\tedt = new Date(doc.Endtime);\n\n\twhile (sdt5 < edt) {\n\t\tintervals.push (new Date(sdt5));\n\t\tsdt5 = new Date(sdt5.getTime() + 60000);\n\t}\n\n//\tval = { server : doc.Server, WP : doc.WP, timeslots : intervals };\n\n    if (doc.Progname === \"RFKK_MASS_ACT_SINGLE_JOB\") {\n       var underposn = doc.Jobname.lastIndexOf(\"_\"); \n        var job = doc.Jobname.slice(0,underposn);\n\tvar shortname = job.slice(0,4)+\"_\"+job.slice(12); \n\n\temit( [shortname, doc.Strtdate, doc.owner],intervals);\n\n    } else {\n\t\n\temit( [doc.Progname, doc.Strtdate, doc.owner],intervals);\n    }\n  }\n\n}"
        }
    },
    "lists": {
