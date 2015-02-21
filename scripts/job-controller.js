@@ -60,7 +60,7 @@ jobController = function() {
                 var program_name;
                 var func;
                 var url;
-                var promise_func1;
+                var promise_func1, promise_func1b, promise_func1c;
                 var promise_func2;
                 var promise_func3;
 
@@ -101,7 +101,45 @@ jobController = function() {
                                   console.log("Fetched: " + data);
                                   history_graph.init(job_page, data, 'summary-results');
                                   history_graph.register();
+                                  $(job_page).find('.job-variability').show();
                               });
+
+                          url = '/jobs/_design/job_stats/_list/duration/job_summary?group=true&level=exact'
+                          url = url + '&startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
+                          url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
+
+                          promise_func1b = $.ajax({
+                              url: url,
+                              type: "GET",
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json"});
+
+                          promise_func1b.done(function(data) {
+                                  console.log("Fetched: " + data);
+                                  history_graph.init(job_page, data, 'summary-history');
+                                  history_graph.register_history();
+                                  $(job_page).find('.job-history-duration').show();
+                              });
+
+                          url = '/jobs/_design/job_details/_list/parallel_calls/server?'
+                          url = url + 'startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
+                          url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
+
+                          promise_func1c = $.ajax({
+                              url: url,
+                              type: "GET",
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json"});
+
+                          promise_func1c.done(function(data) {
+                                  console.log("Fetched: " + data);
+                                  history_graph.init(job_page, data, 'summary-parallel');
+                                  history_graph.register_concurrent_chart();
+                                  $(job_page).find('.job-parallelism').show();
+                              });
+
+
+
                         }
 
                         break;
@@ -279,7 +317,12 @@ jobController = function() {
             $(job_page).find('#authentication').hide();
             $(job_page).find('#history-form').hide();
             $(job_page).find('#summary-results').hide();
+            $(job_page).find('#summary-history').hide();
+            $(job_page).find('#summary-parallel').hide();
             $(job_page).find('#about').hide();
+            $(job_page).find('.job-history-duration').hide();
+            $(job_page).find('.job-variability').hide();
+            $(job_page).find('.job-parallelism').hide();
         },
 
 
@@ -615,6 +658,17 @@ history_graph = function() {
 
         },
 
+        register_history: function() {
+            // Load the Visualization API and the core package.
+            google.load('visualization', '1.0', {
+                'packages': ['corechart'],
+                'callback': function() {
+                    self.draw_history_graph();
+                }
+            });
+
+        },
+
         register_variability_chart: function() {
 
             google.load('visualization', '1.0', {
@@ -625,6 +679,18 @@ history_graph = function() {
             });
 
         },
+
+        register_concurrent_chart: function() {
+
+            google.load('visualization', '1.0', {
+                'packages': ['corechart'],
+                'callback': function() {
+                    self.draw_concurrent_graph();
+                }
+            });
+
+        },
+
 
         draw_graph: function() {
             console.log("Draw history graph");
@@ -688,6 +754,103 @@ history_graph = function() {
             $(job_page).find('#' + dom_id).show();
 
         },
+
+        draw_history_graph: function() {
+            console.log("Draw history graph");
+            // Create the data table.
+
+            var data_rows = [];
+
+            for (var i = 0; i < res_data.rows.length; i++) {
+
+                var value = res_data.rows[i].value;
+                var key = new Date(res_data.rows[i].key[1].slice(0, 10));
+
+                var new_row = [];
+                new_row = [
+                    key,
+                    value
+                ];
+
+                data_rows.push(new_row);
+
+            }
+
+
+            var data = google.visualization.arrayToDataTable(data_rows, true);
+
+            // Set chart options
+            var options_lines = {
+                width: 1000,
+                height: 563,
+                hAxis: {
+                    title: 'Date',
+                    gridlines: {
+                        count: 10
+                    }
+                },
+                vAxis: {
+                    title: 'Time (s)'
+                },
+                legend: 'none'
+            };
+
+            var chart_lines = new google.visualization.ColumnChart(document.getElementById(dom_id));
+            chart_lines.draw(data, options_lines);
+            $(job_page).find('#' + dom_id).show();
+
+        },
+
+
+        draw_concurrent_graph: function() {
+            console.log("Draw concurrent graph");
+            // Create the data table.
+
+            var data_rows = [];
+
+            for (var i = 0; i < res_data.rows.length; i++) {
+
+                var value = res_data.rows[i].value;
+                var key = new Date(res_data.rows[i].key[1]);
+
+                for (var interval in value) {
+                  var new_row = [];
+                  new_row = [
+                      new Date(interval),
+                      value[interval]
+                  ];
+
+                  data_rows.push(new_row);
+
+                }
+
+            }
+
+
+            var data = google.visualization.arrayToDataTable(data_rows, true);
+
+            // Set chart options
+            var options_lines = {
+                width: 1000,
+                height: 563,
+                hAxis: {
+                    title: 'Time',
+                    gridlines: {
+                        count: 10
+                    }
+                },
+                vAxis: {
+                    title: 'Concurrent WP'
+                },
+                legend: 'none'
+            };
+
+            var chart_lines = new google.visualization.ColumnChart(document.getElementById(dom_id));
+            chart_lines.draw(data, options_lines);
+            $(job_page).find('#' + dom_id).show();
+
+        },
+
 
         draw_variability_graph: function() {
             console.log("Draw variability graph");

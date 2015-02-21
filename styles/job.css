@@ -34,3 +34,11 @@ section {
   display: none;
   color: red;
 }
+
+.job-history-duration {
+  display: none;
+}
+
+.job-variability, .job-parallelism {
+  display: none;
+}
