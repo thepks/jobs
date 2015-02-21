@@ -1,10 +1,10 @@
 {
    "_id": "_design/job_stats",
-   "_rev": "61-4b84649ff7eb36e8d9d7473dcc255d98",
+   "_rev": "67-86866ed56cad4ec098907f75dee89f0c",
    "language": "javascript",
    "views": {
        "status": {
-           "map": "function(doc) {\n  if(doc.S && doc.owner && doc.Strtdate) { \n\n        \n        emit([doc.owner, doc.S, doc.Strtdate],doc.Jobname); \n  } \n}"
+           "map": "function(doc) {\n  if(doc.S && doc.owner && doc.Strtdate) { \n\n        \n        emit([doc.S, doc.Strtdate, doc.owner],doc.Jobname); \n  } \n}"
        },
        "mass_summary": {
            "map": "function(doc) { \n\n  var prefix; \n  var suffix; \n\n  if (doc.owner && doc.Progname === \"RFKK_MASS_ACT_SINGLE_JOB\" && doc.Strtdate) { \n\n        var underposn = doc.Jobname.lastIndexOf(\"_\"); \n        var job = doc.Jobname.slice(0,underposn); \n        var duration = doc.Duration.split(/:/); \n\n        var secs = parseInt(duration[0])*3600+parseInt(duration[1])*60+parseInt(duration[2]); \n\n\n        if ( doc.Strtdate && doc.Enddate) { \n                emit([doc.owner, job, doc.Strtdate], [doc.Strttime, doc.Endtime]); \n        } \n  } \n\n} \n",
@@ -28,6 +28,7 @@
        }
    },
    "lists": {
-       "byuser": "function(head,req) { var results = []; var row; var roles = req.userCtx.roles; var admi = false; var requester = req.userCtx.name; for (var v=0;v<roles.length;v++) { if(roles[v] === \"_admin\" || roles[v] === \"jobadmin\"){admi=true;}} while(row=getRow()) {var user = row.key[2]; if(admi||user === requester) {results.push(row); } } var res = {}; res.rows = results; send(JSON.stringify(res)); }"
+       "byuser": "function(head,req) { var results = []; var row; var roles = req.userCtx.roles; var admi = false; var requester = req.userCtx.name; for (var v=0;v<roles.length;v++) { if(roles[v] === \"_admin\" || roles[v] === \"jobadmin\"){admi=true;}} while(row=getRow()) {var user = row.key[2]; if(admi||user === requester) {results.push(row); } } var res = {}; res.rows = results; send(JSON.stringify(res)); }",
+       "duration": "function(head,req) { var row; var results = []; var sdt, edt; var dur; var val = {}; while (row = getRow()){ sdt = new Date(row.value.start); edt = new Date(row.value.finish); dur = edt.getTime() - sdt.getTime(); if (dur > 0) { dur = dur / 1000; } val = {}; val.key = row.key; val.value = dur; results.push(val);} var res = {}; res.rows = results; send(JSON.stringify(res)); }"
    }
 }
