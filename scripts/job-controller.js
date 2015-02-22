@@ -167,7 +167,7 @@ jobController = function() {
 
                     case '2':
 
-                        url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&group_level=1';
+                        url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
                         url = url + '&startkey=[\"A\",\"' + from_date + '\"]';
                         url = url + '&endkey=[\"\u9999\",\"' + to_date + '\u9999\"]';
 
@@ -938,37 +938,69 @@ function history_graph() {
             // Create the data table.
 
             var data_rows = [];
+            var prog_group = {};
 
             for (var i = 0; i < res_data.rows.length; i++) {
 
-                var count = res_data.rows[i].value.count;
-                var avg = res_data.rows[i].value.sum / count;
-                var stddev;
-                var lowval;
-                var highval;
-
-
-                if (count > 1) {
-                    stddev = Math.sqrt((res_data.rows[i].value.sumsqr - (res_data.rows[i].value.sum * res_data.rows[i].value.sum / count)) / (count - 1));
-                    lowval = avg - stddev;
-                    highval = avg + stddev;
-                } else {
-                    lowval = res_data.rows[i].value.min;
-                    highval = res_data.rows[i].value.max;
+                var progkey = res_data.rows[i].key[0];
+                if (!(progkey in prog_group)) {
+                  prog_group[progkey] = {};
+                  prog_group[progkey].program = progkey;
+                  prog_group[progkey].min = 999999999999999;
+                  prog_group[progkey].max = 0;
+                  prog_group[progkey].count = 0;
+                  prog_group[progkey].sum = 0;
+                  prog_group[progkey].sumsqr = 0;
                 }
 
-                var new_row = [];
-                new_row = [
-                    res_data.rows[i].key[0],
-                    res_data.rows[i].value.min,
-                    lowval,
-                    highval,
-                    res_data.rows[i].value.max
-                ];
-
-                data_rows.push(new_row);
-
+                prog_group[progkey].count += res_data.rows[i].value.count;
+                prog_group[progkey].sum += res_data.rows[i].value.sum;
+                prog_group[progkey].sumsqr += res_data.rows[i].value.sumsqr;
+                if (prog_group[progkey].min > res_data.rows[i].value.min) {
+                  prog_group[progkey].min = res_data.rows[i].value.min;
+                }
+                if (prog_group[progkey].max < res_data.rows[i].value.max) {
+                  prog_group[progkey].max = res_data.rows[i].value.max;
+                }
             }
+
+            for (var key in prog_group) {
+              var item = prog_group[key];
+              var cnt = item.count;
+              var sum = item.sum;
+              var sumsqr = item.sumsqr;
+              var avg = sum/cnt;
+              var min = item.min;
+              var max = item.max;
+              var program = item.program;
+
+              var stddev;
+              var lowval;
+              var highval;
+
+
+              if (cnt > 1) {
+                  stddev = Math.sqrt((sumsqr - (sum * sum / cnt)) / (cnt - 1));
+                  lowval = avg - stddev;
+                  highval = avg + stddev;
+              } else {
+                  lowval = min;
+                  highval = max;
+              }
+
+              var new_row = [];
+              new_row = [
+                  program,
+                  min,
+                  lowval,
+                  highval,
+                  max
+              ];
+
+              data_rows.push(new_row);
+
+            };
+
 
 
             var data = google.visualization.arrayToDataTable(data_rows, true);
