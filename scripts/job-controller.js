@@ -99,8 +99,9 @@ jobController = function() {
 
                           promise_func1.done(function(data) {
                                   console.log("Fetched: " + data);
-                                  history_graph.init(job_page, data, 'summary-results');
-                                  history_graph.register();
+                                  var graph1 = history_graph();
+                                  graph1.init(job_page, data, 'summary-results');
+                                  graph1.register();
                                   $(job_page).find('.job-variability').show();
                               });
 
@@ -116,8 +117,9 @@ jobController = function() {
 
                           promise_func1b.done(function(data) {
                                   console.log("Fetched: " + data);
-                                  history_graph.init(job_page, data, 'summary-history');
-                                  history_graph.register_history();
+                                  var graph2 = history_graph();
+                                  graph2.init(job_page, data, 'summary-history');
+                                  graph2.register_history();
                                   $(job_page).find('.job-history-duration').show();
                               });
 
@@ -133,8 +135,9 @@ jobController = function() {
 
                           promise_func1c.done(function(data) {
                                   console.log("Fetched: " + data);
-                                  history_graph.init(job_page, data, 'summary-parallel');
-                                  history_graph.register_concurrent_chart();
+                                  var graph3 = history_graph();
+                                  graph3.init(job_page, data, 'summary-parallel');
+                                  graph3.register_concurrent_chart();
                                   $(job_page).find('.job-parallelism').show();
                               });
 
@@ -150,8 +153,9 @@ jobController = function() {
 
                           promise_func1d.done(function(data) {
                                   console.log("Fetched: " + data);
-                                  history_graph.init(job_page, data, 'summary-processing');
-                                  history_graph.register_processing_chart();
+                                  var graph4 = history_graph();
+                                  graph4.init(job_page, data, 'summary-processing');
+                                  graph4.register_processing_chart();
                                   $(job_page).find('.job-processing-characteristics').show();
                               });
 
@@ -175,8 +179,9 @@ jobController = function() {
 
                         promise_func2.done(function(data) {
                                 console.log("Fetched: " + JSON.stringify(data));
-                                history_graph.init(job_page, data, 'summary-results');
-                                history_graph.register_variability_chart();
+                                var var_graph = history_graph();
+                                var_graph.init(job_page, data, 'summary-results');
+                                var_graph.register_variability_chart();
                             });
 
                         break;
@@ -644,7 +649,7 @@ jobController = function() {
 }();
 
 
-history_graph = function() {
+function history_graph() {
 
     var res_data;
     var job_page;
@@ -764,7 +769,7 @@ history_graph = function() {
             // Set chart options
             var options_lines = {
                 width: 1000,
-                height: 563,
+                height: 400,
                 hAxis: {
                     title: 'Date',
                     format: 'dd.MM.yy',
@@ -811,7 +816,7 @@ history_graph = function() {
             // Set chart options
             var options_lines = {
                 width: 1000,
-                height: 563,
+                height: 400,
                 hAxis: {
                     title: 'Date',
                     gridlines: {
@@ -861,7 +866,7 @@ history_graph = function() {
             // Set chart options
             var options_lines = {
                 width: 1000,
-                height: 563,
+                height: 400,
                 hAxis: {
                     title: 'Time',
                     gridlines: {
@@ -885,7 +890,7 @@ history_graph = function() {
             // Create the data table.
 
             var data_rows = [];
-            data_rows.push (['Date','CPU (ABAP)%','DB %']);
+            data_rows.push (['Date','CPU (ABAP)','DB']);
 
 
             for (var i = 0; i < res_data.rows.length; i++) {
@@ -906,7 +911,7 @@ history_graph = function() {
             // Set chart options
             var options_lines = {
                 width: 1000,
-                height: 563,
+                height: 400,
                 hAxis: {
                     title: 'Date',
                     gridlines: {
@@ -994,7 +999,7 @@ history_graph = function() {
     }
 
 
-}();
+};
 
 
 
