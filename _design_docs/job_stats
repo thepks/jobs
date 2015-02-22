@@ -1,6 +1,6 @@
 {
    "_id": "_design/job_stats",
-   "_rev": "67-86866ed56cad4ec098907f75dee89f0c",
+   "_rev": "85-f5f3bf0f1cf5e98daaa7b7355b49cd20",
    "language": "javascript",
    "views": {
        "status": {
@@ -25,6 +25,10 @@
        "job_stats": {
            "map": "function(doc) { \n\n  var prefix; \n  var suffix; \n\n  if (doc.Progname === \"RFKK_MASS_ACT_SINGLE_JOB\" && doc.owner) { \n\n        var underposn = doc.Jobname.lastIndexOf(\"_\"); \n        var job = doc.Jobname.slice(0,underposn);\n\tvar short_job = job.slice(0,4)+\"_\"+job.slice(12); \n        var duration = doc.Duration.split(/:/); \n\n        var secs = parseInt(duration[0])*3600+parseInt(duration[1])*60+parseInt(duration[2]); \n\n        if (isNumber(secs) ) { \n\n                emit([short_job, doc.Strtdate, doc.owner], secs,'doc.CPU ms'); \n        } \n  } else if (doc.Progname && doc.Duration && doc.owner) {\n        var duration = doc.Duration.split(/:/); \n\n        var secs = parseInt(duration[0])*3600+parseInt(duration[1])*60+parseInt(duration[2]); \n\n        if (isNumber(secs) ) { \n\n                emit([doc.Progname, doc.Strtdate, doc.owner], secs,'doc.CPU ms'); \n        } \n\n  } \n\n} \n\n\nfunction isNumber(n) { \n  return !isNaN(parseFloat(n)) && isFinite(n); \n} \n",
            "reduce": "_stats"
+       },
+       "abap_db_split": {
+           "map": "function(doc) {\n    var abap_cpu_pc;\n    var abap_cpu;\n    var db_pc;\n    var db;\n    var sdt, edt;\n    \n    var elapsed;\n    var progname;\n\n    if (doc.User && doc.Progname === \"RFKK_MASS_ACT_SINGLE_JOB\") {\n\n        var underposn = doc.Jobname.lastIndexOf(\"_\");\n        var job = doc.Jobname.slice(0, underposn);\n        progname = job.slice(0, 4) + \"_\" + job.slice(12);\n    } else {\n        progname = doc.Progname;\n    }\n\n    if (doc.Endtime) {\n        var key;\n        sdt = new Date(doc.Strttime);\n        edt = new Date(doc.Endtime);\n        elapsed = edt.getTime() - sdt.getTime();\n        key = \"CPU ms\";\n        abap_cpu = parseInt(doc[key],10);\n        key = \"DB ms\";\n        db = parseInt(doc[key],10);\n\n        emit([progname, doc.Strtdate, doc.owner], {\n            'abap': abap_cpu,\n            'db': db,\n            'total': elapsed\n        });\n    }\n\n}",
+           "reduce": "function(keys, values, rereduce) {\n\n   var abap = 0;\n   var db = 0;\n   var total = 0;\n\n   return {\n     'abap' : ( function () { \n         \n         abap = 0;   \n         values.forEach(function(value) {\n            abap += value.abap;\n         });\n         return abap;\n     })(),\n\n     'db' :  ( function () { \n         db = 0;\n         values.forEach(function(value) {\n            db += value.db;\n         });\n         return db;\n     })(),\n\n     'total' : ( function () { \n         total = 0;\n         values.forEach(function(value) {\n            total += value.total;\n         });\n         return total;\n     })()\n   };\n\n}"
        }
    },
    "lists": {
