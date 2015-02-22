@@ -1,6 +1,6 @@
 {
    "_id": "_design/job_stats",
-   "_rev": "85-f5f3bf0f1cf5e98daaa7b7355b49cd20",
+   "_rev": "86-f90e5c0203948aabac89aeb66ab9bb42",
    "language": "javascript",
    "views": {
        "status": {
@@ -33,6 +33,7 @@
    },
    "lists": {
        "byuser": "function(head,req) { var results = []; var row; var roles = req.userCtx.roles; var admi = false; var requester = req.userCtx.name; for (var v=0;v<roles.length;v++) { if(roles[v] === \"_admin\" || roles[v] === \"jobadmin\"){admi=true;}} while(row=getRow()) {var user = row.key[2]; if(admi||user === requester) {results.push(row); } } var res = {}; res.rows = results; send(JSON.stringify(res)); }",
-       "duration": "function(head,req) { var row; var results = []; var sdt, edt; var dur; var val = {}; while (row = getRow()){ sdt = new Date(row.value.start); edt = new Date(row.value.finish); dur = edt.getTime() - sdt.getTime(); if (dur > 0) { dur = dur / 1000; } val = {}; val.key = row.key; val.value = dur; results.push(val);} var res = {}; res.rows = results; send(JSON.stringify(res)); }"
+       "duration": "function(head,req) { var row; var results = []; var sdt, edt; var dur; var val = {}; while (row = getRow()){ sdt = new Date(row.value.start); edt = new Date(row.value.finish); dur = edt.getTime() - sdt.getTime(); if (dur > 0) { dur = dur / 1000; } val = {}; val.key = row.key; val.value = dur; results.push(val);} var res = {}; res.rows = results; send(JSON.stringify(res)); }",
+       "proc_percentages": "function(head, req) { var abap_pc, db_pc; var results = []; var val = {}; while (row = getRow()) { abap_pc = row.value.abap / row.value.total * 100; db_pc = row.value.db / row.value.total * 100; val = {}; val.key = row.key; val.value = { 'abap': abap_pc, 'db' : db_pc }; results.push(val); } var res = {}; res.rows = results; send(JSON.stringify(res)); }"
    }
 }

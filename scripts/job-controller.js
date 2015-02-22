@@ -60,7 +60,7 @@ jobController = function() {
                 var program_name;
                 var func;
                 var url;
-                var promise_func1, promise_func1b, promise_func1c;
+                var promise_func1, promise_func1b, promise_func1c, promise_func1d;
                 var promise_func2;
                 var promise_func3;
 
@@ -136,6 +136,23 @@ jobController = function() {
                                   history_graph.init(job_page, data, 'summary-parallel');
                                   history_graph.register_concurrent_chart();
                                   $(job_page).find('.job-parallelism').show();
+                              });
+
+                          url = '/jobs/_design/job_stats/_list/proc_percentages/abap_db_split?group=true&level=exact&'
+                          url = url + 'startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
+                          url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
+
+                          promise_func1d = $.ajax({
+                              url: url,
+                              type: "GET",
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json"});
+
+                          promise_func1d.done(function(data) {
+                                  console.log("Fetched: " + data);
+                                  history_graph.init(job_page, data, 'summary-processing');
+                                  history_graph.register_processing_chart();
+                                  $(job_page).find('.job-processing-characteristics').show();
                               });
 
 
@@ -319,10 +336,12 @@ jobController = function() {
             $(job_page).find('#summary-results').hide();
             $(job_page).find('#summary-history').hide();
             $(job_page).find('#summary-parallel').hide();
+            $(job_page).find('#summary-processing').hide();
             $(job_page).find('#about').hide();
             $(job_page).find('.job-history-duration').hide();
             $(job_page).find('.job-variability').hide();
             $(job_page).find('.job-parallelism').hide();
+            $(job_page).find('.job-processing-characteristics').hide();
         },
 
 
@@ -691,6 +710,16 @@ history_graph = function() {
 
         },
 
+        register_processing_chart: function() {
+
+            google.load('visualization', '1.0', {
+                'packages': ['corechart'],
+                'callback': function() {
+                    self.draw_processing_graph();
+                }
+            });
+
+        },
 
         draw_graph: function() {
             console.log("Draw history graph");
@@ -843,6 +872,53 @@ history_graph = function() {
                     title: 'Concurrent WP'
                 },
                 legend: 'none'
+            };
+
+            var chart_lines = new google.visualization.ColumnChart(document.getElementById(dom_id));
+            chart_lines.draw(data, options_lines);
+            $(job_page).find('#' + dom_id).show();
+
+        },
+
+        draw_processing_graph: function() {
+            console.log("Draw procesing graph");
+            // Create the data table.
+
+            var data_rows = [];
+            data_rows.push (['Date','CPU (ABAP)%','DB %']);
+
+
+            for (var i = 0; i < res_data.rows.length; i++) {
+                var new_row = [];
+                var value = res_data.rows[i].value;
+                var key = new Date(res_data.rows[i].key[1].slice(0, 10));
+                new_row = [ key,
+                value.abap,
+                value.db];
+
+                data_rows.push(new_row);
+
+            }
+
+
+            var data = google.visualization.arrayToDataTable(data_rows, false);
+
+            // Set chart options
+            var options_lines = {
+                width: 1000,
+                height: 563,
+                hAxis: {
+                    title: 'Date',
+                    gridlines: {
+                        count: 10
+                    }
+                },
+                vAxis: {
+                    title: 'Processing Percentage'
+                },
+                legend: { position: 'top', maxLines: 3 },
+
+                isStacked: true,
             };
 
             var chart_lines = new google.visualization.ColumnChart(document.getElementById(dom_id));

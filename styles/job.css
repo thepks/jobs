@@ -39,6 +39,6 @@ section {
   display: none;
 }
 
-.job-variability, .job-parallelism {
+.job-variability, .job-parallelism, .job-processing-characteristics {
   display: none;
 }
