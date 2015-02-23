@@ -6,6 +6,7 @@ jobController = function() {
     var analysis_type; // 1= history, 2= variability, 3=degradation
     var self;
 
+
     return {
 
         init: function(page) {
@@ -324,7 +325,7 @@ jobController = function() {
 
 
 
-            $('#importFile').change(self.loadFromHTML);
+            $('#importFile').change(self.loadFromHTML2);
             initialised = true;
             console.log('Initialised job-controller');
         },
@@ -394,35 +395,31 @@ jobController = function() {
 
         },
 
-        // function to read and trigger upload of file
-
-        loadFromHTML: function(event) {
-            var reader = new FileReader();
-
-            $(job_page).find('#load-feedback').text("Loading ...");
-            $(job_page).find('#load-feedback').show();
-
-            reader.onload = function(evt) {
-                var parsed_lines = self.parse_html(evt.target.result);
-                self.uploadAsUser(parsed_lines);
-
-            };
-
-            reader.onerror = function(evt) {
-                errorLogger("cannot_read_file", "The file specified cannot be read");
-
-                $(job_page).find('#load-feedback').text("The file specified cannot be read");
-
-                setTimeout(function() {
-                    $(job_page).find('#load-feedback').hide();
-                }, 2000);
-
-            };
+        loadFromHTML2: function(event) {
 
             console.log('About to read');
-            reader.readAsText(event.target.files[0]);
 
+            $(job_page).find('#load-feedback').text("Loading ... please wait");
+            $(job_page).find('#load-feedback').show();
+
+
+            for (var i=0; i< event.target.files.length; i++) {
+              new file_parser(event.target.files[i]).
+                then(self.uploadAsUser,
+                  function(error) {
+
+                    $(job_page).find('#load-feedback').text("The file specified cannot be read");
+
+                    setTimeout(function() {
+                        $(job_page).find('#load-feedback').hide();
+                    }, 2000);
+
+
+                  });
+            }
         },
+
+
 
         // Function to perform mass upload of parsed data as a particular user.  Check user is logged on.
 
@@ -448,50 +445,6 @@ jobController = function() {
                 }, 5000);
             });
 
-
-        },
-
-        // function parse the html file
-
-        parse_html: function(data) {
-
-
-            var lines = data;
-
-            var a = 0;
-            var maxlen = lines.length;
-            console.log('Length is ' + maxlen);
-            var linepos, linepos2, linepos3;
-            var r, q, q2, q3, q4;
-            var processed = '';
-            while (a < maxlen) {
-                linepos = lines.indexOf('nobr', a);
-                if (linepos == -1) {
-                    break;
-                }
-
-                linepos2 = lines.indexOf('>', linepos) + 1;
-                linepos3 = lines.indexOf('<', linepos2);
-                r = lines.slice(linepos2, linepos3);
-                q = r.replace(/&nbsp;/g, ' ');
-                q2 = q.replace(/&amp;/g, '&');
-                q3 = q2.replace(/&lt;/g, '<');
-                q4 = q3.replace(/&#38;/g, '&');
-                if (q4.trim().length > 1) {
-                    processed = processed + q4 + '\n';
-                }
-
-                a = linepos3;
-            }
-
-            var line_array = processed.split("\n");
-            //console.log(processed[0]);
-            var line_cnt = 0;
-            for (var l in line_array) {
-                line_cnt++;
-            }
-
-            return line_array;
 
         },
 
@@ -647,6 +600,67 @@ jobController = function() {
 
     };
 }();
+
+function file_parser(f) {
+    var deferred = $.Deferred();
+
+    var reader = new FileReader();
+
+
+    reader.onload = function(evt) {
+        var parsed_lines = parse_html(evt.target.result);
+        deferred.resolve(parsed_lines);
+    };
+
+    reader.onerror = function(evt) {
+      deferred.reject(evt);
+    };
+
+    console.log('About to read');
+    reader.readAsText(f);
+    return deferred.promise();
+}
+
+function parse_html(data) {
+
+  var lines = data;
+
+  var a = 0;
+  var maxlen = lines.length;
+  console.log('Length is ' + maxlen);
+  var linepos, linepos2, linepos3;
+  var r, q, q2, q3, q4;
+  var processed = '';
+  while (a < maxlen) {
+      linepos = lines.indexOf('nobr', a);
+      if (linepos == -1) {
+          break;
+      }
+
+      linepos2 = lines.indexOf('>', linepos) + 1;
+      linepos3 = lines.indexOf('<', linepos2);
+      r = lines.slice(linepos2, linepos3);
+      q = r.replace(/&nbsp;/g, ' ');
+      q2 = q.replace(/&amp;/g, '&');
+      q3 = q2.replace(/&lt;/g, '<');
+      q4 = q3.replace(/&#38;/g, '&');
+      if (q4.trim().length > 1) {
+          processed = processed + q4 + '\n';
+      }
+
+      a = linepos3;
+  }
+
+  var line_array = processed.split("\n");
+  //console.log(processed[0]);
+  var line_cnt = 0;
+  for (var l in line_array) {
+      line_cnt++;
+  }
+
+  return line_array;
+
+}
 
 
 function history_graph() {
