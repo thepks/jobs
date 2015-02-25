@@ -1,6 +1,6 @@
 {
    "_id": "_design/job_details",
-   "_rev": "53-57cd71b333539a2074cb4a0e42b89326",
+   "_rev": "54-8000596f37f5b929b46829b9f5979f72",
    "language": "javascript",
    "views": {
        "owner": {
@@ -13,6 +13,6 @@
    },
    "lists": {
        "byuser": "function(head,req) { var results = []; var row; var roles = req.userCtx.roles; var admi = false; var requester = req.userCtx.name; for (var v=0;v<roles.length;v++) { if(roles[v] === \"_admin\" || roles[v] === \"jobadmin\"){admi=true;}} while(row=getRow()) {var user = row.key[1]; if(admi||user === requester) {results.push(row); } } var res = {}; res.rows = results; send(JSON.stringify(res)); }",
-       "parallel_calls": "function(head, req) { var intervals = {}; var row; while (row = getRow()) { var values = row.value; var key = row.key; log(key); log(values); values.forEach(function(value) { if (!intervals[key]) { intervals[key] = {}; } if (intervals[key][value]) { intervals[key][value] ++; } else { intervals[key][value] = 1; } }); } var res = {}; var results = []; var restogo = {}; for (var key_togo in intervals) { res = {}; res.key = key_togo; res.value = intervals[key_togo]; results.push(res); } restogo.rows = results; send(JSON.stringify(restogo));}"
+       "parallel_calls": "function(head, req) { var intervals = {}; var row; while (row = getRow()) { var values = row.value; var key = row.key; values.forEach(function(value) { if (!intervals[key]) { intervals[key] = {}; } if (intervals[key][value]) { intervals[key][value] ++; } else { intervals[key][value] = 1; } }); } var res = {}; var results = []; var restogo = {}; for (var key_togo in intervals) { res = {}; res.key = key_togo; res.value = intervals[key_togo]; results.push(res); } restogo.rows = results; send(JSON.stringify(restogo));}"
    }
 }
