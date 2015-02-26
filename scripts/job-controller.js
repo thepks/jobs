@@ -397,13 +397,14 @@ jobController = function() {
 
         loadFromHTML2: function(event) {
 
+          if (logged_on) {
             console.log('About to read');
 
             $(job_page).find('#load-feedback').text("Loading ... please wait");
             $(job_page).find('#load-feedback').show();
 
 
-            for (var i=0; i< event.target.files.length; i++) {
+ /*           for (var i=0; i< event.target.files.length; i++) {
               new file_parser(event.target.files[i]).
                 then(self.uploadAsUser,
                   function(error) {
@@ -416,41 +417,93 @@ jobController = function() {
 
 
                   });
-            }
-        },
+            }*/
+            var uploads = event.target.files.length;
+
+            for (var i=0; i< event.target.files.length; i++) {
+              new file_parser(event.target.files[i]).
+                then(upload_job_data).
+                then(function(){
+                  console.log('Upload done!');
+                  uploads--;
+
+
+                  if(uploads == 0) {
+
+                    $(job_page).find('#load-feedback').text("Upload completed");
+
+                    self.fetch_job_types();
+
+                    setTimeout(function() {
+                        $('#load-feedback').hide();
+                    }, 5000);
+
+
+                  }
 
 
 
-        // Function to perform mass upload of parsed data as a particular user.  Check user is logged on.
+                },
+                  function(error) {
 
-        uploadAsUser: function(parsed_lines) {
-            var usr;
-            var promise_upload;
+                    $(job_page).find('#load-feedback').text("The file specified cannot be read");
 
-            promise_upload = $.get("/_session", function(data, status) {
-                console.log("Data " + data);
-                var res = JSON.parse(data);
-
-                self.upload(parsed_lines, res.userCtx.name);
-            });
+                    setTimeout(function() {
+                        $(job_page).find('#load-feedback').hide();
+                    }, 2000);
 
 
-            promise_upload.fail(function(jqXHR, textStatus, errorThrown) {
-                console.log('Error! ' + errorThrown);
-
+                  });
+            };
+          } else {
                 $(job_page).find('#load-feedback').text("Please logon to upload");
 
                 setTimeout(function() {
                     $('#load-feedback').hide();
                 }, 5000);
-            });
+
+          }
+
+//            upload_job_data(parsed_lines, id)
+
+        }
+
+    };
+}();
+
+function upload_job_data(parsed_lines, id) {
+
+  var deferred = $.Deferred();
+  var token = id;
+  var usr;
+  var promise_upload;
+
+  promise_upload = $.get("/_session", function(data, status) {
+      console.log("Data " + data);
+      var res = JSON.parse(data);
+      console.log(res.userCtx.name);
+
+      upload(parsed_lines, res.userCtx.name);
+  });
 
 
-        },
+  promise_upload.done(function(){
+      deferred.resolve(token);
+  });
 
-        // uokoad the data
+  promise_upload.fail(function(jqXHR, textStatus, errorThrown) {
+      deferred.reject(token,errorThrown);
+  });
 
-        upload: function(data, username) {
+
+  return deferred.promise();
+}
+
+
+function upload(data, username) {
+
+            var deferred = $.Deferred();
+
             var upload_url = '/jobs';
             var promise_bulkupload;
 
@@ -569,37 +622,17 @@ jobController = function() {
             });
 
             promise_bulkupload.done(function() {
-                    console.log("Uploaded: ");
-
-                    $(job_page).find('#load-feedback').text("Upload completed");
-
-                    self.fetch_job_types();
-
-                    setTimeout(function() {
-                        $('#load-feedback').hide();
-                    }, 5000);
-                });
+              deferred.resolve();
+                 });
 
             promise_bulkupload.fail(function(data, status) {
-                    console.log("Error! " + data + "\nStatus: " + status);
-
-                    $(job_page).find('#load-feedback').text("Upload failed!");
-
-                    setTimeout(function() {
-                        $('#load-feedback').hide();
-                    }, 5000);
-
+              deferred.reject(data);
             });
 
-
-            return col;
-
-        }
+  return deferred.promise();
+}
 
 
-
-    };
-}();
 
 function file_parser(f) {
     var deferred = $.Deferred();
