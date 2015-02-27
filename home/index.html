@@ -28,10 +28,10 @@
         <div>
           <ul class="nav navbar-nav">
             <li class="active"><a href="#" id="homeEvt">Home</a></li>
-            <li><a href="#" id="loadEvt">Load</a></li>
+            <li><a href="#" id="loadEvt">Upload</a></li>
             <li><a href="#" id="historyEvt">Job Summary</a></li>
             <li><a href="#" id="variabilityEvt">Variability</a></li>
-            <li><a href="#" id="degradationEvt">Degradation</a></li>
+            <li><a href="#" id="degradationEvt">Trends</a></li>
             <li><a href="#" id="recommendationEvt">Recommendations</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
@@ -127,6 +127,29 @@
       </div>
       <div id="summary-parallel" class="summary-results"></div>
     </section>
+
+
+    <section>
+      <div class="job-change-reduce">
+        <p>Jobs that have a trend of reducing time</p>
+      </div>
+      <div id="summary-reduce" class="summary-reduce"></div>
+    </section>
+
+    <section>
+      <div class="job-change-increase">
+        <p>Jobs that have a trend of increasing time</p>
+      </div>
+      <div id="summary-increase" class="summary-increase"></div>
+    </section>
+
+    <section>
+      <div class="job-change-neutral">
+        <p>Jobs that have a trend of constant time</p>
+      </div>
+      <div id="summary-neutral" class="summary-neutral"></div>
+    </section>
+
 
 
 

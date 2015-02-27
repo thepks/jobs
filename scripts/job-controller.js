@@ -384,6 +384,12 @@ jobController = function() {
             $(job_page).find('.job-variability').hide();
             $(job_page).find('.job-parallelism').hide();
             $(job_page).find('.job-processing-characteristics').hide();
+            $(job_page).find('.summary-neutral').hide();
+            $(job_page).find('.summary-increase').hide();
+            $(job_page).find('.summary-decrease').hide();
+            $(job_page).find('.job-change-neutral').hide();
+            $(job_page).find('.job-change-increase').hide();
+            $(job_page).find('.job-change-decrease').hide();
         },
 
 

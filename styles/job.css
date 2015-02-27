@@ -42,3 +42,7 @@ section {
 .job-variability, .job-parallelism, .job-processing-characteristics {
   display: none;
 }
+
+.job-change-reduce, .job-change-increase, .job-change-neutral {
+  display: none;
+}
