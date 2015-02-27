@@ -319,7 +319,7 @@ jobController = function() {
                 console.log('In logon');
                 var usr = $(job_page).find('#username').val();
                 var pwd = $(job_page).find('#password').val();
-                var jname = [];
+
                 var promise_logon;
 
                 promise_logon = $.ajax({
@@ -398,10 +398,6 @@ jobController = function() {
         fetch_job_types: function() {
 
             var url = '/jobs/_design/job_details/_list/byuser/owner?group=true&level=exact';
-            var res;
-            var usr;
-            var job_list_data = {};
-            var job_names = [];
             var duplist = [];
             var deduplist = [];
             var promise_jobtypes;
@@ -546,7 +542,6 @@ function upload(data, username) {
 
     var deferred = $.Deferred();
 
-    var upload_url = '/jobs';
     var promise_bulkupload;
 
     var config = {
@@ -564,14 +559,13 @@ function upload(data, username) {
 
 
     var last_pos = 0;
-    var found_jobs = [];
     var is_mass = false;
-    var dedup_jobs = Object.create(null);
     var first = true;
     var col = [];
     var field_names = [];
     var lines = data;
     var job_list = [];
+    var job ={};
 
     //      	console.log(lines[0]);
     for (var l = 0; l < lines.length; l++) {
@@ -607,6 +601,9 @@ function upload(data, username) {
         } else { // rest of the file is the data
             job = {};
             var val;
+            var strtdate;
+            var tf;
+            
             for (var w = 0; w < col.length; w++) {
                 if (w < col.length - 1) {
                     val = lines[l].slice(col[w], col[w + 1] - 1);
@@ -728,11 +725,11 @@ function parse_html(data) {
 
     var line_array = processed.split("\n");
     //console.log(processed[0]);
-    var line_cnt = 0;
+/*    var line_cnt = 0;
     for (var l in line_array) {
         line_cnt++;
     }
-
+*/
     return line_array;
 
 }
@@ -1092,7 +1089,7 @@ function history_graph() {
 
                 data_rows.push(new_row);
 
-            };
+            }
 
 
 
@@ -1121,10 +1118,10 @@ function history_graph() {
         }
 
 
-    }
+    };
 
 
-};
+}
 
 
 
@@ -1139,7 +1136,7 @@ Array.prototype.remove = function(from, to) {
 function sap_date(dt) {
     var parts = dt.split(".");
     return new Date(parts[2], parts[1] - 1, parts[0]);
-};
+}
 
 
 function calc_approx_week(dt) {
