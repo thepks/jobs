@@ -192,6 +192,37 @@ jobController = function() {
 
                         break;
 
+                    case '3':
+                      // get the date approx weeks
+                      var startdt = new Date(from_date);
+                      var enddt = new Date(to_date);
+                      var startwk = calc_approx_week(startdt);
+                      var endwk = calc_approx_week(enddt);
+
+                        url = '/jobs/_design/job_stats/_list/byuser/job_weekly_stats?group=true&level=exact';
+                        url = url + '&startkey=[\"A\",\"' + startwk + '\"]';
+                        url = url + '&endkey=[\"\u9999\",\"' + endwk + '\"]';
+
+                        promise_func2 = $.ajax({
+                            url: url,
+                            type: "GET",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json"
+                        });
+
+                        promise_func2.done(function(data) {
+                            console.log("Fetched: " + JSON.stringify(data));
+/*                            var var_graph = history_graph();
+                            var_graph.init(job_page, data, 'summary-results');
+                            var_graph.register_variability_chart();
+                            */
+                        });
+
+                        break;
+
+
+
+
 
                 }
 
@@ -1103,3 +1134,16 @@ function sap_date(dt) {
     var parts = dt.split(".");
     return new Date(parts[2], parts[1] - 1, parts[0]);
 };
+
+
+function calc_approx_week(dt) {
+
+	var yr = dt.getFullYear();
+	var approx_yr_start = yr+"-01-01T00:00:00.000Z";
+	var startdtsecs = Date.parse(approx_yr_start);
+	var dtsecs = dt.getTime();
+
+	var week = (dtsecs - startdtsecs) / 604800000;
+	return Math.floor(week);
+
+}
