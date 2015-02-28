@@ -35,11 +35,7 @@ section {
   color: red;
 }
 
-.job-history-duration {
-  display: none;
-}
-
-.job-variability, .job-parallelism, .job-processing-characteristics {
+.job-history-duration, .job-variability, .job-parallelism, .job-processing-characteristics {
   display: none;
 }
 

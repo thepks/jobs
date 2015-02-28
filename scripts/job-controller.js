@@ -193,13 +193,13 @@ jobController = function() {
                         break;
 
                     case '3':
-                      // get the date approx weeks
-                      var startdt = new Date(from_date);
-                      var enddt = new Date(to_date);
-                      var startwk = calc_approx_week(startdt);
-                      var endwk = calc_approx_week(enddt);
+                        // get the date approx weeks
+                        var startdt = new Date(from_date);
+                        var enddt = new Date(to_date);
+                        var startwk = calc_approx_week(startdt);
+                        var endwk = calc_approx_week(enddt);
 
-                        url = '/jobs/_design/job_stats/_list/byuser/job_weekly_stats?group=true&level=exact';
+                        url = '/jobs/_design/job_stats/_list/deg_by_week/job_weekly_stats?group=true&level=exact';
                         url = url + '&startkey=[\"A\",\"' + startwk + '\"]';
                         url = url + '&endkey=[\"\u9999\",\"' + endwk + '\"]';
 
@@ -212,7 +212,7 @@ jobController = function() {
 
                         promise_func2.done(function(data) {
                             console.log("Fetched: " + JSON.stringify(data));
-/*                            var var_graph = history_graph();
+                            /*                            var var_graph = history_graph();
                             var_graph.init(job_page, data, 'summary-results');
                             var_graph.register_variability_chart();
                             */
@@ -462,36 +462,37 @@ jobController = function() {
                     new file_parser(event.target.files[i]).
                     then(upload_job_data).
                     then(function() {
-                            console.log('Upload done!');
-                            uploads--;
+                        console.log('Upload done!');
+                        uploads--;
 
 
-                            if (uploads === 0) {
+                        if (uploads === 0) {
 
-                                $(job_page).find('#load-feedback').text("Upload completed");
+                            $(job_page).find('#load-feedback').text("Upload completed");
 
-                                self.fetch_job_types();
-
-                                setTimeout(function() {
-                                    $('#load-feedback').hide();
-                                }, 5000);
-
-
-                            }
-
-
-
-                        },
-                        function(error) {
-
-                            $(job_page).find('#load-feedback').text("The file specified cannot be read");
+                            self.fetch_job_types();
 
                             setTimeout(function() {
-                                $(job_page).find('#load-feedback').hide();
-                            }, 2000);
+                                $('#load-feedback').hide();
+                            }, 5000);
 
 
-                        });
+                        }
+
+
+
+                    },
+
+                    function(error) {
+
+                        $(job_page).find('#load-feedback').text("The file specified cannot be read");
+
+                        setTimeout(function() {
+                            $(job_page).find('#load-feedback').hide();
+                        }, 2000);
+
+
+                    });
                 }
             } else {
                 $(job_page).find('#load-feedback').text("Please logon to upload");
@@ -565,7 +566,7 @@ function upload(data, username) {
     var field_names = [];
     var lines = data;
     var job_list = [];
-    var job ={};
+    var job = {};
 
     //      	console.log(lines[0]);
     for (var l = 0; l < lines.length; l++) {
@@ -603,7 +604,7 @@ function upload(data, username) {
             var val;
             var strtdate;
             var tf;
-            
+
             for (var w = 0; w < col.length; w++) {
                 if (w < col.length - 1) {
                     val = lines[l].slice(col[w], col[w + 1] - 1);
@@ -725,7 +726,7 @@ function parse_html(data) {
 
     var line_array = processed.split("\n");
     //console.log(processed[0]);
-/*    var line_cnt = 0;
+    /*    var line_cnt = 0;
     for (var l in line_array) {
         line_cnt++;
     }
@@ -838,12 +839,11 @@ function history_graph() {
 
                 var new_row = [];
                 new_row = [
-                    new Date(res_data.rows[i].key[1].slice(0, 10)),
-                    res_data.rows[i].value.min,
-                    lowval,
-                    highval,
-                    res_data.rows[i].value.max
-                ];
+                new Date(res_data.rows[i].key[1].slice(0, 10)),
+                res_data.rows[i].value.min,
+                lowval,
+                highval,
+                res_data.rows[i].value.max];
 
                 data_rows.push(new_row);
 
@@ -888,9 +888,8 @@ function history_graph() {
 
                 var new_row = [];
                 new_row = [
-                    key,
-                    value
-                ];
+                key,
+                value];
 
                 data_rows.push(new_row);
 
@@ -936,9 +935,8 @@ function history_graph() {
                 for (var interval in value) {
                     var new_row = [];
                     new_row = [
-                        new Date(interval),
-                        value[interval]
-                    ];
+                    new Date(interval),
+                    value[interval]];
 
                     data_rows.push(new_row);
 
@@ -984,9 +982,8 @@ function history_graph() {
                 var value = res_data.rows[i].value;
                 var key = new Date(res_data.rows[i].key[1].slice(0, 10));
                 new_row = [key,
-                    value.abap,
-                    value.db
-                ];
+                value.abap,
+                value.db];
 
                 data_rows.push(new_row);
 
@@ -1080,12 +1077,11 @@ function history_graph() {
 
                 var new_row = [];
                 new_row = [
-                    program,
-                    min,
-                    lowval,
-                    highval,
-                    max
-                ];
+                program,
+                min,
+                lowval,
+                highval,
+                max];
 
                 data_rows.push(new_row);
 
@@ -1141,12 +1137,12 @@ function sap_date(dt) {
 
 function calc_approx_week(dt) {
 
-	var yr = dt.getFullYear();
-	var approx_yr_start = yr+"-01-01T00:00:00.000Z";
-	var startdtsecs = Date.parse(approx_yr_start);
-	var dtsecs = dt.getTime();
+    var yr = dt.getFullYear();
+    var approx_yr_start = yr + "-01-01T00:00:00.000Z";
+    var startdtsecs = Date.parse(approx_yr_start);
+    var dtsecs = dt.getTime();
 
-	var week = (dtsecs - startdtsecs) / 604800000;
-	return Math.floor(week);
+    var week = (dtsecs - startdtsecs) / 604800000;
+    return Math.floor(week);
 
 }
