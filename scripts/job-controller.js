@@ -1059,7 +1059,7 @@ function history_graph() {
                 vAxis: {
                     title: 'Change',
                     textStyle: {
-                        fontSize: 6
+                        fontSize: 7
                     }
                 },
                 legend: {
@@ -1157,13 +1157,13 @@ function history_graph() {
                     title: 'Program',
                     gridlines: {
                         count: 10
+                    },
+                    textStyle: {
+                        fontSize: 7
                     }
                 },
                 vAxis: {
                     title: 'Time (s)',
-                    textStyle: {
-                        fontSize: 6
-                    }
                 },
                 legend: 'none'
             };
