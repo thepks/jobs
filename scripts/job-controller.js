@@ -215,6 +215,7 @@ jobController = function() {
                             var var_graph = history_graph();
                             var_graph.init(job_page, data, 'summary-reduce');
                             var_graph.register_change_chart();
+                            $(job_page).find('.job-change-reduce').show();
                         });
 
                         break;
