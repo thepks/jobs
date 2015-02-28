@@ -1053,7 +1053,7 @@ function history_graph() {
             // Set chart options
             var options_lines = {
                 width: 1000,
-                height: 1000,
+                height: 1500,
                 hAxis: {
                     title: 'Program',
                     gridlines: {
@@ -1061,14 +1061,17 @@ function history_graph() {
                     }
                 },
                 vAxis: {
-                    title: 'Change'
+                    title: 'Change',
+                    textStyle: {
+                        fontSize: 6
+                    }
                 },
                 legend: {
                     position: 'top',
                     maxLines: 3
                 },
 
-                isStacked: false,
+                isStacked: false
             };
 
             var chart_lines = new google.visualization.BarChart(document.getElementById(dom_id));
@@ -1161,7 +1164,10 @@ function history_graph() {
                     }
                 },
                 vAxis: {
-                    title: 'Time (s)'
+                    title: 'Time (s)',
+                    textStyle: {
+                        fontSize: 6
+                    }
                 },
                 legend: 'none'
             };
