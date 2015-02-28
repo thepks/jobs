@@ -1024,7 +1024,7 @@ function history_graph() {
             $(job_page).find('#' + dom_id).show();
 
         },
-        
+
         draw_change_graph: function() {
             console.log("Draw change graph");
             // Create the data table.
@@ -1037,7 +1037,7 @@ function history_graph() {
                 var new_row = [];
                 var value = res_data.rows[i].value;
                 var key = res_data.rows[i].key;
-                new_row = [key,value];
+                new_row = [key, value];
 
                 data_rows.push(new_row);
 
@@ -1060,10 +1060,7 @@ function history_graph() {
                     title: 'Change',
                     textStyle: {
                         fontSize: 7
-                    },
-                    direction:-1,
-                    slantedText:true,
-                    slantedTextAngle:90
+                    }
                 },
                 legend: {
                     position: 'top',
