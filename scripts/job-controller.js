@@ -1063,7 +1063,7 @@ function history_graph() {
                     },
                     direction:-1,
                     slantedText:true,
-                    slantedTextAngle:90 s
+                    slantedTextAngle:90
                 },
                 legend: {
                     position: 'top',
