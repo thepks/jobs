@@ -1060,7 +1060,10 @@ function history_graph() {
                     title: 'Change',
                     textStyle: {
                         fontSize: 7
-                    }
+                    },
+                    direction:-1,
+                    slantedText:true,
+                    slantedTextAngle:90 s
                 },
                 legend: {
                     position: 'top',
