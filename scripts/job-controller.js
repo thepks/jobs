@@ -212,10 +212,9 @@ jobController = function() {
 
                         promise_func2.done(function(data) {
                             console.log("Fetched: " + JSON.stringify(data));
-                            /*                            var var_graph = history_graph();
-                            var_graph.init(job_page, data, 'summary-results');
-                            var_graph.register_variability_chart();
-                            */
+                            var var_graph = history_graph();
+                            var_graph.init(job_page, data, 'summary-reduce');
+                            var_graph.register_change_chart();
                         });
 
                         break;
@@ -813,6 +812,17 @@ function history_graph() {
 
         },
 
+
+        register_change_chart: function() {
+
+            google.load('visualization', '1.0', {
+                'packages': ['corechart'],
+                'callback': function() {
+                    self.draw_change_graph();
+                }
+            });
+
+        },
         draw_graph: function() {
             console.log("Draw history graph");
             // Create the data table.
@@ -1018,6 +1028,55 @@ function history_graph() {
             $(job_page).find('#' + dom_id).show();
 
         },
+        
+        draw_change_graph: function() {
+            console.log("Draw change graph");
+            // Create the data table.
+
+            var data_rows = [];
+            data_rows.push(['Program', 'Change']);
+
+
+            for (var i = 0; i < res_data.rows.length; i++) {
+                var new_row = [];
+                var value = res_data.rows[i].value;
+                var key = res_data.rows[i].key;
+                new_row = [key,value];
+
+                data_rows.push(new_row);
+
+            }
+
+
+            var data = google.visualization.arrayToDataTable(data_rows, false);
+
+            // Set chart options
+            var options_lines = {
+                width: 1000,
+                height: 1000,
+                hAxis: {
+                    title: 'Program',
+                    gridlines: {
+                        count: 10
+                    }
+                },
+                vAxis: {
+                    title: 'Change'
+                },
+                legend: {
+                    position: 'top',
+                    maxLines: 3
+                },
+
+                isStacked: false,
+            };
+
+            var chart_lines = new google.visualization.BarChart(document.getElementById(dom_id));
+            chart_lines.draw(data, options_lines);
+            $(job_page).find('#' + dom_id).show();
+
+        },
+
 
 
         draw_variability_graph: function() {
