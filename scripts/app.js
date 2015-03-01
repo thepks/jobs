@@ -25,6 +25,7 @@
 
         this.logon = function() {
             console.log(this.username);
+            var that = this;
 
             var promise_logon;
 
@@ -39,8 +40,8 @@
             promise_logon.done(function(data, status, jqXHR) {
                 console.log("Data: " + data + "\nStatus: " + status);
                 //                auth_token = jqXHR.getResponseHeader("AuthSession");
-                this.option = 1;
-                this.logged_on = true;
+                that.option = 1;
+                that.logged_on = true;
 
                 /*                $(job_page).find('#program-names').empty();
                 $(job_page).find('#program-names').append("<option value='Please wait, loading'></option>");
@@ -49,12 +50,12 @@
             });
             promise_logon.fail(function(data, status) {
                 console.log("Error! " + data + "\nStatus: " + status);
-                this.logon_error = 1;
-                this.logon_error_message = 'Logon Failed! ' + status;
+                that.logon_error = 1;
+                that.logon_error_message = 'Logon Failed! ' + status;
 
 
                 setTimeout(function() {
-                    this.logon_error = 0;
+                    that.logon_error = 0;
                 }, 2000);
 
             });
@@ -233,12 +234,6 @@
 
     };
 
-
-    function gather_job_details() {
-        
-
-
-    }
 
 
     function history_graph() {
