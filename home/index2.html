@@ -73,6 +73,7 @@
                                 <label for="importFile">Job file to load</label>
                                 <input type="file" id="importFile" name="importFile" class="form-control" multiple />
                             </div>
+                            <button type="button" class="btn btn-primary" id="upload-button" ng-click="uploadCtrl.load()">Upload</button>
                              <h5 id="load-feedback" class="load-feedback"></h5>
 
                         </div>
@@ -170,6 +171,38 @@
                       </div>
                       <div id="variability-results"></div>
                     </section>
+                </section>
+            </section>
+            
+            
+            <section ng-show="job.isOption(5)" ng-controller="ChangeController as changeCtrl">
+                                    <form role="form" id="jobChange" novalidate>
+                                        <div id="change-form" class="jumbotron">
+                                             <h3 id='history-form-title'>Select program details to be displayed</h3>
+                    
+                                            <div class="row form-group"> <span class="col-sm-6">
+                                                     <label for="startDate">Start Date</label>
+                                                   <input type="date" id="startDate" name="startDate" class="form-control" ng-model="changeCtrl.historyFormData.fromDate" />
+                                                 </span>
+                     <span class="col-sm-6">
+                                                     <label for="endDate">End Date</label>
+                                                   <input type="date" id="endDate" name="endDate" class="form-control" ng-model="changeCtrl.historyFormData.toDate"/>
+                                                 </span>
+                                            </div>
+                                            <div class-"row form-group">
+                                                <span class="col-sm-3">
+                                                    <button type="button" class="btn btn-primary" id="variability-button" ng-click="changeCtrl.history()">Display</button>
+                                                 </span>
+                                                <span class="col-sm-9">&nbsp;</span>
+                                            </div>
+                                        </div>
+                                    </form>
+                
+                <section ng-show="job.isOption(5) && changeCtrl.job_data">
+                  <div>
+                    <p>Analysis of change by week, greater than zero increasing, less than zero reducing.</p>
+                  </div>
+                  <div id="summary-reduce"></div>
                 </section>
             </section>
             <section ng-show="job.isOption(7)">
