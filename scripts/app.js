@@ -94,6 +94,46 @@
 
     });
 
+    app.controller('VariabilityController', function() {
+        
+        this.history = function() {
+            var that = this;
+            
+            this.data = false;
+            if (this.historyFormData) {
+                console.log(this.historyFormData);
+            
+                var from_date = this.historyFormData.fromDate;
+                var to_date = this.historyFormData.toDate;
+                var promise_func2;
+                
+                var url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
+                url = url + '&startkey=[\"A\",\"' + from_date + '\"]';
+                url = url + '&endkey=[\"\u9999\",\"' + to_date + '\u9999\"]';
+
+                promise_func2 = $.ajax({
+                    url: url,
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+
+                promise_func2.done(function(data) {
+                    console.log("Fetched: " + JSON.stringify(data));
+                    var var_graph = history_graph();
+                    var_graph.init(data, 'summary-results');
+                    var_graph.register_variability_chart();
+                });
+            
+                this.data = true;
+            }
+        };
+
+
+        
+    });
+
+
     app.controller('HistoryController', function() {
 
         this.history = function() {

@@ -45,10 +45,10 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li ng-hide="job.logged_on">
-                                <a href="#" id="logonEvt" ng-click="job.setOption(7)" ><span class="glyphicon glyphicon-log-in"></span> Login</a>
+                                <a href="#" id="logonEvt" ng-click="job.setOption(7)"><span class="glyphicon glyphicon-log-in"></span> Login</a>
                             </li>
                             <li ng-show="job.logged_on">
-                                <a href="#" id="logoffEvt" ng-click="job.logoff()" ><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                                <a href="#" id="logoffEvt" ng-click="job.logoff()"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
                             </li>
                         </ul>
                     </div>
@@ -138,6 +138,37 @@
                             <p>Overview of job parallel execution, look for consistent work process number use</p>
                         </div>
                         <div id="summary-parallel"></div>
+                    </section>
+                </section>
+            </section>
+            <section ng-show="job.isOption(4)" ng-controller="VariabilityController as variabilityCtrl">
+                <form role="form" id="jobVariability" novalidate>
+                    <div id="history-form" class="jumbotron">
+                         <h3 id='history-form-title'>Select program details to be displayed</h3>
+
+                        <div class="row form-group"> <span class="col-sm-6">
+                                 <label for="startDate">Start Date</label>
+                               <input type="date" id="startDate" name="startDate" class="form-control" ng-model="variabilityCtrl.historyFormData.fromDate" />
+                             </span>
+ <span class="col-sm-6">
+                                 <label for="endDate">End Date</label>
+                               <input type="date" id="endDate" name="endDate" class="form-control" ng-model="variabilityCtrl.historyFormData.toDate"/>
+                             </span>
+                        </div>
+                        <div class-"row form-group">
+                            <span class="col-sm-3">
+                                <button type="button" class="btn btn-primary" id="variability-button" ng-click="variabilityCtrl.history()">Display</button>
+                             </span>
+                            <span class="col-sm-9">&nbsp;</span>
+                        </div>
+                    </div>
+                </form>
+                <section ng-show="job.isOption(7) && variabilityCtrl.job_data">
+                    <section>
+                      <div>
+                        <p>Overview of job variability, high variability is usually a bad sign</p>
+                      </div>
+                      <div id="summary-results"></div>
                     </section>
                 </section>
             </section>
