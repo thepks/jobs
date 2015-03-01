@@ -121,7 +121,7 @@
                 promise_func2.done(function(data) {
                     console.log("Fetched: " + JSON.stringify(data));
                     var var_graph = history_graph();
-                    var_graph.init(data, 'summary-results');
+                    var_graph.init(data, 'variability-results');
                     var_graph.register_variability_chart();
                 });
             
