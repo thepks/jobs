@@ -1063,10 +1063,7 @@ function history_graph() {
                         fontSize: 7
                     }
                 },
-                legend: {
-                    position: 'top',
-                    maxLines: 3
-                },
+                legend: 'none',
 
                 isStacked: false
             };

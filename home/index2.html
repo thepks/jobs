@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Job Analysis</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../styles/job.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="../scripts/app.js"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+            google.load('visualization', '1.0', {'packages':['corechart', 'table'], 'callback' : function () {console.log('loaded google charts');}});
+        </script>
+    </head>
+    <body ng-app="jobAnalyser" ng-controller="JobController as job">
+        <main id="jobPage">
+            <nav class="navbar navbar-inverse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#" id="aboutEvt" ng-click="job.setOption(0)">Job Analysis</a>
+                    </div>
+                    <div>
+                        <ul class="nav navbar-nav">
+                            <li class="active">
+                                <a href="#" id="homeEvt" ng-click="job.setOption(1)">Home</a>
+                            </li>
+                            <li>
+                                <a href="#" id="loadEvt" ng-click="job.setOption(2)">Upload</a>
+                            </li>
+                            <li>
+                                <a href="#" id="historyEvt" ng-click="job.setOption(3)">Job Summary</a>
+                            </li>
+                            <li>
+                                <a href="#" id="variabilityEvt" ng-click="job.setOption(4)">Variability</a>
+                            </li>
+                            <li>
+                                <a href="#" id="degradationEvt" ng-click="job.setOption(5)">Trends</a>
+                            </li>
+                            <li>
+                                <a href="#" id="recommendationEvt" ng-click="job.setOption(6)">Recommendations</a>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <a href="#" id="logonEvt" ng-click="job.setOption(7)" ng-hide="job.logged_on"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+                            </li>
+                            <li>
+                                <a href="#" id="logoffEvt" ng-click="job.logoff()" ng-show="job.logged_on"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            
+            <section id="about" ng-show="job.isOption(0)">
+                <div class="jumbotron">
+                     <h3>Job Analysis</h3>
+
+                    <p>Use this site to upload and review performance of jobs.</p>
+                    <p>The load function takes the mailed spool output from job /ssa/btc in html format.</p>
+                    <p>Standard users are only able to see details for jobs that they have uploaded.</p>
+                </div>
+            </section>
+            
+            <section id="job" ng-show="job.isOption(2)">
+                <form role="form" id="uploadForm" ng-controller="UploadController as uploadCtrl" novalidate>
+                    <section>
+                        <div id="load" class="jumbotron">
+                             <h3>Select file of job data to upload</h3>
+
+                            <div class="form-group">
+                                <label for="importFile">Job file to load</label>
+                                <input type="file" id="importFile" name="importFile" class="form-control" multiple />
+                            </div>
+                             <h5 id="load-feedback" class="load-feedback"></h5>
+
+                        </div>
+                    </section>
+                </form>
+            </section>
+            
+            <section ng-show="job.isOption(3)" ng-controller="HistoryController as historyCtrl">
+                <form role="form" id="jobHistory"  novalidate>
+                    <div id="history-form" class="jumbotron">
+                         <h3 id='history-form-title'>Select program details to be displayed</h3>
+
+                        <div class="row form-group"> <span class="col-sm-6">
+                      <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" name="startDate" class="form-control" ng-model="historyCtrl.historyFormData.fromDate" />
+                  </span>
+                  <span class="col-sm-6">
+                      <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" name="endDate" class="form-control" ng-model="historyCtrl.historyFormData.toDate"/>
+                  </span>
+
+                  </div>
+                        <div class="row form-group"> <span class="col-sm-6">
+                    <span id='program-sect'>
+                      <label for="program_name">Program</label>
+                      <input list="program-names" name="program-name" id="program-name" ng-model="historyCtrl.historyFormData.program"/>
+                      <datalist id="program-names">
+                        <option value="Please logon"/>
+                      </datalist>
+                    </span>
+
+                             <h5 id="form-val-message" class="form-val-message">A program name is required</h5>
+
+                            </span> <span class="col-sm-3">
+                    <button type="button" class="btn btn-primary" id="analysis-button" ng-click="historyCtrl.history()">Load</button>
+                  </span>
+ <span class="col-sm-3">&nbsp;</span>
+
+                        </div>
+                    </div>
+                    </div>
+                </form>
+            </section>
+            
+            <section ng-show="job.isOption(3) && historyCtrl.data.rows.length">
+                <section>
+                  <div>
+                    <p>Overall Job Duration</p>
+                  </div>
+                  <div id="summary-history"></div>
+                </section>
+            
+                <section>
+                  <div>
+                    <p>Overview of job variability, high variability is usually a bad sign</p>
+                  </div>
+                  <div id="summary-results"></div>
+                </section>
+            
+                <section>
+                  <div>
+                    <p>Overview of job processing characteristics. Abap over 30% is usually a bad sign, DB may be as much as 98% and not be a problem.</p>
+                  </div>
+                  <div id="summary-processing"></div>
+                </section>
+            
+                <section>
+                  <div>
+                    <p>Overview of job parallel execution, look for consistent work process number use</p>
+                  </div>
+                  <div id="summary-parallel"></div>
+                </section>
+            </section> 
+            
+            <section ng-show="job.isOption(7)">
+              <div id="authentication" class="container">
+                <form role="form" id="logon"  novalidate>
+                <div class="row form-group">
+                  <span class="col-sm-6">&nbsp;</span>
+                  <span class="col-sm-3">
+                      <label for="username">Id</label>
+                    <input type="text" id="username" name="username" class="form-control" ng-model="job.username"/>
+                  </span>
+                  <span class="col-sm-3">
+                      <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" ng-model="job.password" />
+                  </span>
+        
+                </div>
+                <div class="row form-group">
+                  <span class="col-sm-9">&nbsp;</span>
+                  <span class="col-sm-3">
+                    <button type="button" class="btn btn-primary" id="authButton" ng-click="job.logon()"><span class="glyphicon glyphicon-log-in"></span> Login</button>
+                  </span>
+                </div>
+                <div class="row" ng-show="job.isErrorLogon()">
+                  <span class="col-sm-9">&nbsp;</span>
+                  <span class="col-sm-3">
+                    <h5 id="auth-results" class="auth-results" ng-model="job.logon_error_message">Logon Failed!</h5>
+                  </span>
+                </div>
+                </form>
+              </div>
+            </section>
+        
+            
+            
+    </body>
+</html>
