@@ -100,9 +100,9 @@
             if (this.historyFormData) {
                 console.log(this.historyFormData);
                 
-                var program_name = this.history_form_data.program;
-                var from_date = this.history_form_data.fromDate;
-                var to_date = this.history_form_data.toDate;
+                var program_name = this.historyFormData.program;
+                var from_date = this.historyFormData.fromDate;
+                var to_date = this.historyFormData.toDate;
                 var promise_func1;
                 var promise_func1b;
                 var promise_func1c;
