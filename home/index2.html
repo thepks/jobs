@@ -54,7 +54,6 @@
                     </div>
                 </div>
             </nav>
-            
             <section id="about" ng-show="job.isOption(0)">
                 <div class="jumbotron">
                      <h3>Job Analysis</h3>
@@ -64,7 +63,6 @@
                     <p>Standard users are only able to see details for jobs that they have uploaded.</p>
                 </div>
             </section>
-            
             <section id="job" ng-show="job.isOption(2)">
                 <form role="form" id="uploadForm" ng-controller="UploadController as uploadCtrl" novalidate>
                     <section>
@@ -81,9 +79,8 @@
                     </section>
                 </form>
             </section>
-            
             <section ng-show="job.isOption(3)" ng-controller="HistoryController as historyCtrl">
-                <form role="form" id="jobHistory"  novalidate>
+                <form role="form" id="jobHistory" novalidate>
                     <div id="history-form" class="jumbotron">
                          <h3 id='history-form-title'>Select program details to be displayed</h3>
 
@@ -91,12 +88,12 @@
                       <label for="startDate">Start Date</label>
                     <input type="date" id="startDate" name="startDate" class="form-control" ng-model="historyCtrl.historyFormData.fromDate" />
                   </span>
-                  <span class="col-sm-6">
+ <span class="col-sm-6">
                       <label for="endDate">End Date</label>
                     <input type="date" id="endDate" name="endDate" class="form-control" ng-model="historyCtrl.historyFormData.toDate"/>
                   </span>
 
-                  </div>
+                        </div>
                         <div class="row form-group"> <span class="col-sm-6">
                     <span id='program-sect'>
                       <label for="program_name">Program</label>
@@ -117,70 +114,60 @@
                     </div>
                     </div>
                 </form>
+                <section ng-show="job.isOption(3) && historyCtrl.job_data">
+                    <section>
+                        <div>
+                            <p>Overall Job Duration</p>
+                        </div>
+                        <div id="summary-history"></div>
+                    </section>
+                    <section>
+                        <div>
+                            <p>Overview of job variability, high variability is usually a bad sign</p>
+                        </div>
+                        <div id="summary-results"></div>
+                    </section>
+                    <section>
+                        <div>
+                            <p>Overview of job processing characteristics. Abap over 30% is usually a bad sign, DB may be as much as 98% and not be a problem.</p>
+                        </div>
+                        <div id="summary-processing"></div>
+                    </section>
+                    <section>
+                        <div>
+                            <p>Overview of job parallel execution, look for consistent work process number use</p>
+                        </div>
+                        <div id="summary-parallel"></div>
+                    </section>
+                </section>
             </section>
-            
-            <section ng-show="job.isOption(3) && historyCtrl.job_data">
-                <section>
-                  <div>
-                    <p>Overall Job Duration</p>
-                  </div>
-                  <div id="summary-history"></div>
-                </section>
-            
-                <section>
-                  <div>
-                    <p>Overview of job variability, high variability is usually a bad sign</p>
-                  </div>
-                  <div id="summary-results"></div>
-                </section>
-            
-                <section>
-                  <div>
-                    <p>Overview of job processing characteristics. Abap over 30% is usually a bad sign, DB may be as much as 98% and not be a problem.</p>
-                  </div>
-                  <div id="summary-processing"></div>
-                </section>
-            
-                <section>
-                  <div>
-                    <p>Overview of job parallel execution, look for consistent work process number use</p>
-                  </div>
-                  <div id="summary-parallel"></div>
-                </section>
-            </section> 
-            
             <section ng-show="job.isOption(7)">
-              <div id="authentication" class="container">
-                <form role="form" id="logon"  novalidate>
-                <div class="row form-group">
-                  <span class="col-sm-6">&nbsp;</span>
-                  <span class="col-sm-3">
+                <div id="authentication" class="container">
+                    <form role="form" id="logon" novalidate>
+                        <div class="row form-group"> <span class="col-sm-6">&nbsp;</span>
+ <span class="col-sm-3">
                       <label for="username">Id</label>
                     <input type="text" id="username" name="username" class="form-control" ng-model="job.username"/>
                   </span>
-                  <span class="col-sm-3">
+ <span class="col-sm-3">
                       <label for="password">Password</label>
                     <input type="password" id="password" name="password" class="form-control" ng-model="job.password" />
                   </span>
-        
-                </div>
-                <div class="row form-group">
-                  <span class="col-sm-9">&nbsp;</span>
-                  <span class="col-sm-3">
+
+                        </div>
+                        <div class="row form-group"> <span class="col-sm-9">&nbsp;</span>
+ <span class="col-sm-3">
                     <button type="button" class="btn btn-primary" id="authButton" ng-click="job.logon()"><span class="glyphicon glyphicon-log-in"></span> Login</button>
-                  </span>
-                </div>
-                <div class="row" ng-show="job.isErrorLogon()">
-                  <span class="col-sm-9">&nbsp;</span>
-                  <span class="col-sm-3">
+                            </span>
+                        </div>
+                        <div class="row" ng-show="job.isErrorLogon()"> <span class="col-sm-9">&nbsp;</span>
+ <span class="col-sm-3">
                     <h5 id="auth-results" class="auth-results" ng-model="job.logon_error_message">Logon Failed!</h5>
                   </span>
+
+                        </div>
+                    </form>
                 </div>
-                </form>
-              </div>
             </section>
-        
-            
-            
     </body>
 </html>
