@@ -143,7 +143,7 @@
             </section>
             <section ng-show="job.isOption(4)" ng-controller="VariabilityController as variabilityCtrl">
                 <form role="form" id="jobVariability" novalidate>
-                    <div id="history-form" class="jumbotron">
+                    <div id="variability-form" class="jumbotron">
                          <h3 id='history-form-title'>Select program details to be displayed</h3>
 
                         <div class="row form-group"> <span class="col-sm-6">
@@ -163,7 +163,7 @@
                         </div>
                     </div>
                 </form>
-                <section ng-show="job.isOption(7) && variabilityCtrl.job_data">
+                <section ng-show="job.isOption(4) && variabilityCtrl.job_data">
                     <section>
                       <div>
                         <p>Overview of job variability, high variability is usually a bad sign</p>
