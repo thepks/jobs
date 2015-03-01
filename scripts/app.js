@@ -2,6 +2,7 @@
     var app = angular.module('jobAnalyser', []);
 
     var option = 0;
+    var job_data = false;
     var logged_on = false;
     var logon_error = 0;
     var logon_error_message;
@@ -98,7 +99,90 @@
         this.history = function() {
             if (this.historyFormData) {
                 console.log(this.historyFormData);
-                this.historyFormData = {};
+                
+                var program_name = this.history_form_data.program;
+                var from_date = this.history_form_data.fromDate;
+                var to_date = this.history_form_data.toDate;
+                var promise_func1;
+                var promise_func1b;
+                var promise_func1c;
+                var promise_func1d;
+                
+                var url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
+        
+        
+                url = url + '&startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
+                url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
+        
+                promise_func1 = $.ajax({
+                    url: url,
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+        
+                promise_func1.done(function(data) {
+                    console.log("Fetched: " + data);
+                    var graph1 = history_graph();
+                    graph1.init(data, 'summary-results');
+                    graph1.register();
+                });
+        
+                url = '/jobs/_design/job_stats/_list/duration/job_summary?group=true&level=exact';
+                url = url + '&startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
+                url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
+        
+                promise_func1b = $.ajax({
+                    url: url,
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+        
+                promise_func1b.done(function(data) {
+                    console.log("Fetched: " + data);
+                    var graph2 = history_graph();
+                    graph2.init(data, 'summary-history');
+                    graph2.register_history();
+                });
+        
+                url = '/jobs/_design/job_details/_list/parallel_calls/server?';
+                url = url + 'startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
+                url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
+        
+                promise_func1c = $.ajax({
+                    url: url,
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+        
+                promise_func1c.done(function(data) {
+                    console.log("Fetched: " + data);
+                    var graph3 = history_graph();
+                    graph3.init(data, 'summary-parallel');
+                    graph3.register_concurrent_chart();
+                });
+        
+                url = '/jobs/_design/job_stats/_list/proc_percentages/abap_db_split?group=true&level=exact&';
+                url = url + 'startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
+                url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
+        
+                promise_func1d = $.ajax({
+                    url: url,
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+        
+                promise_func1d.done(function(data) {
+                    console.log("Fetched: " + data);
+                    var graph4 = history_graph();
+                    graph4.init(data, 'summary-processing');
+                    graph4.register_processing_chart();
+                });
+        
+                this.job_data = true;
             }
         };
 
@@ -150,19 +234,24 @@
     };
 
 
+    function gather_job_details() {
+        
+
+
+    }
+
+
     function history_graph() {
 
     var res_data;
-    var job_page;
     var self;
     var dom_id;
 
     return {
-        init: function(page, raw_data, id) {
+        init: function(raw_data, id) {
 
             self = this;
             res_data = raw_data;
-            job_page = page;
             dom_id = id;
 
         },
