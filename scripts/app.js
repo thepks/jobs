@@ -66,7 +66,6 @@
         this.logoff = function() {
             var promise_logoff;
             console.log('In event logoff');
-            evt.preventDefault();
             this.logged_on = false;
             this.option = 1;
 
