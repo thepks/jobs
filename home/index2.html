@@ -44,11 +44,11 @@
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                            <li>
-                                <a href="#" id="logonEvt" ng-click="job.setOption(7)" ng-hide="job.logged_on"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+                            <li ng-hide="job.logged_on">
+                                <a href="#" id="logonEvt" ng-click="job.setOption(7)" ><span class="glyphicon glyphicon-log-in"></span> Login</a>
                             </li>
-                            <li>
-                                <a href="#" id="logoffEvt" ng-click="job.logoff()" ng-show="job.logged_on"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                            <li ng-show="job.logged_on">
+                                <a href="#" id="logoffEvt" ng-click="job.logoff()" ><span class="glyphicon glyphicon-log-out"></span> Logout</a>
                             </li>
                         </ul>
                     </div>
