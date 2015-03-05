@@ -75,9 +75,9 @@
 
                             <div class="form-group">
                                 <label for="importFile">Job file to load</label>
-                                <input type="file" id="importFile" name="importFile" class="form-control"  multiple />
+                                <input type="file" id="importFile" name="importFile" class="form-control" multiple />
                             </div>
-                            <button type="button" class="btn btn-primary" id="upload-button" >Upload</button>
+                            <button type="button" class="btn btn-primary" id="upload-button">Upload</button>
                              <h5 id="load-feedback" class="load-feedback"></h5>
 
                         </div>
@@ -102,11 +102,9 @@
                         <div class="row form-group"> <span class="col-sm-6">
                     <span id='program-sect'>
                       <label for="program_name">Program</label>
-                      <input list="program-names" name="program-name" id="program-name" ng-model="historyCtrl.historyFormData.program" 
-                      ng-options="n for n in JobDataService.programNames"/>
-                      <datalist id="program-names">
-                        <option value="Please logon"/>
-                      </datalist>
+                      <select name="program-name" id="program-name" ng-model="historyCtrl.historyFormData.program" 
+                      ng-options="n for n in historyCtrl.program_names()">
+                          </select>
                     </span>
 
                              <h5 id="form-val-message" class="form-val-message">A program name is required</h5>
@@ -238,13 +236,10 @@
                 </div>
             </section>
     </body>
-    
     <script>
-    
-       $(document).ready(function() {
-    
-          jobFileController.init();
-       });
+        $(document).ready(function() {
+        
+              jobFileController.init();
+           });
     </script>
-    
 </html>

@@ -200,6 +200,10 @@
 
     app.controller('HistoryController', ["JobGraphService", "JobDataService", function(JobGraphService, JobDataService) {
 
+        this.program_names = function() {
+            return JobDataService.program_names();
+        };
+
         this.history = function() {
             if (this.historyFormData) {
                 console.log(this.historyFormData);
