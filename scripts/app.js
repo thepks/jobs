@@ -185,7 +185,7 @@
                 var to_date = this.historyFormData.toDate;
 
                 var url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
-                url = url + '&startkey=[\"A\",\"' + from_date + '\"]';
+                url = url + '&startkey=[\"\",\"' + from_date + '\"]';
                 url = url + '&endkey=[\"\u9999\",\"' + to_date + '\u9999\"]';
 
                 $http.get(url).
@@ -219,7 +219,7 @@
                 var endwk = calc_approx_week(enddt);
 
                 var url = '/jobs/_design/job_stats/_list/deg_by_week/job_weekly_stats?group=true&level=exact';
-                url = url + '&startkey=[\"A\",\"' + startwk + '\"]';
+                url = url + '&startkey=[\"\",\"' + startwk + '\"]';
                 url = url + '&endkey=[\"\u9999\",\"' + endwk + '\"]';
 
                 $http.get(url).
