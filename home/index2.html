@@ -11,6 +11,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="../scripts/upload.js"></script>
         <script type="text/javascript" src="../scripts/job-graphs.js"></script>
+        <script type="text/javascript" src="../scripts/job-data-services.js"></script>
         <script type="text/javascript" src="../scripts/app.js"></script>
         <script type="text/javascript" src="../scripts/job-file-controller.js"></script>
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -30,19 +31,19 @@
                             <li class="active">
                                 <a href="#" id="homeEvt" ng-click="job.setOption(1)">Home</a>
                             </li>
-                            <li>
+                            <li ng-show="job.logged_on">
                                 <a href="#" id="loadEvt" ng-click="job.setOption(2)">Upload</a>
                             </li>
-                            <li>
+                            <li ng-show="job.logged_on">
                                 <a href="#" id="historyEvt" ng-click="job.setOption(3)">Job Summary</a>
                             </li>
-                            <li>
+                            <li ng-show="job.logged_on">
                                 <a href="#" id="variabilityEvt" ng-click="job.setOption(4)">Variability</a>
                             </li>
-                            <li>
+                            <li ng-show="job.logged_on">
                                 <a href="#" id="degradationEvt" ng-click="job.setOption(5)">Trends</a>
                             </li>
-                            <li>
+                            <li ng-show="job.logged_on">
                                 <a href="#" id="recommendationEvt" ng-click="job.setOption(6)">Recommendations</a>
                             </li>
                         </ul>
@@ -101,7 +102,8 @@
                         <div class="row form-group"> <span class="col-sm-6">
                     <span id='program-sect'>
                       <label for="program_name">Program</label>
-                      <input list="program-names" name="program-name" id="program-name" ng-model="historyCtrl.historyFormData.program"/>
+                      <input list="program-names" name="program-name" id="program-name" ng-model="historyCtrl.historyFormData.program" 
+                      ng-options="n for n in JobDataService.programNames"/>
                       <datalist id="program-names">
                         <option value="Please logon"/>
                       </datalist>

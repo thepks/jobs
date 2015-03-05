@@ -1,5 +1,5 @@
 (function() {
-    var app = angular.module('jobAnalyser', ["upload","JobGraphService"]);
+    var app = angular.module('jobAnalyser', ["upload", "JobGraphService", "JobDataService"]);
 
     var option = 0;
     var job_data = false;
@@ -9,7 +9,7 @@
     var username;
     var password;
 
-    app.controller('JobController', ["$http", "$q", function($http, $q) {
+    app.controller('JobController', ["JobDataService", function(JobDataService) {
 
         this.setOption = function(value) {
             this.option = value;
@@ -27,15 +27,15 @@
             console.log(this.username);
             var that = this;
 
-            $http.post("/_session", {
-                name: this.username,
-                password: this.password
-            }).
-            then(that.fetch_job_types).
-            then(function() {
+            JobDataService.authenticate(this.username, this.password).
+            success(function() {
                 that.option = 1;
                 that.logged_on = true;
-            },(function(data, status) {
+                setTimeout(function() {
+                    JobDataService.populate_program_names();
+                }, 200);
+            }).
+            error(function(data, status) {
                 that.logon_error = 1;
                 that.logon_error_message = 'Logon Failed! ' + status;
 
@@ -44,65 +44,23 @@
                     that.logon_error = 0;
                 }, 2000);
 
-            })
-            );
-
-
-        };
-        
-        this.fetch_job_types = function() {
-    
-            var deferred = $q.defer();
-    
-            var url = '/jobs/_design/job_details/_list/byuser/owner?group=true&level=exact';
-            var duplist = [];
-            var deduplist = [];
-            var promise_jobtypes;
-            var that = this;
-            var data;
-    
-            $http.get(url).
-            success(function(data) {
-    
-                $('#program-names').empty();
-                $('#program-name').val('');
-                console.log("Fetched: " + data);
-    
-                duplist = data.rows.map(function(a) {
-                    return a.key[0];
-                });
-    
-                deduplist = duplist.reduce(function(a, b) {
-                    if (a.indexOf(b) < 0) {
-                        a.push(b);
-                    }
-                    return a;
-                }, []);
-    
-                for (var q = 0; q < deduplist.length; q++) {
-                    $('#program-names').append("<option value='" + deduplist[q] + "'></option>");
-                }
-                
-                deferred.resolve();
-            }).
-            error( function(){
-               deferred.reject(); 
             });
-            
-            return deferred.promise;
-    
+
+
         };
-    
+
+
+
+
 
         this.logoff = function() {
             console.log('In event logoff');
             this.logged_on = false;
             this.option = 1;
 
-            $http.delete("/_session").
+            JobDataService.end_session().
             success(function(data, status, headers) {
-                $('#program-names').empty();
-                $('#program-names').append("<option value='Please logon'></option>");
+                JobDataService.reset_program_names();
             }).
             error(function(data, status) {
                 console.log('failed to logoff');
@@ -172,7 +130,7 @@
         };
     });
 
-    app.controller('VariabilityController',["$http", "JobGraphService" , function($http, JobGraphService) {
+    app.controller('VariabilityController', ["JobGraphService", "JobDataService", function(JobGraphService, JobDataService) {
 
         this.history = function() {
             var that = this;
@@ -184,11 +142,7 @@
                 var from_date = this.historyFormData.fromDate;
                 var to_date = this.historyFormData.toDate;
 
-                var url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
-                url = url + '&startkey=[\"\",\"' + from_date + '\"]';
-                url = url + '&endkey=[\"\u9999\",\"' + to_date + '\u9999\"]';
-
-                $http.get(url).
+                JobDataService.general_stats(from_date, to_date).
                 success(function(data) {
                     JobGraphService.variability_graph(data, 'variability-results');
                 });
@@ -201,7 +155,7 @@
 
     }]);
 
-    app.controller('ChangeController',["$http", "JobGraphService", function($http, JobGraphService) {
+    app.controller('ChangeController', ["JobGraphService", "JobDataService", function(JobGraphService, JobDataService) {
 
         this.history = function() {
             var that = this;
@@ -213,16 +167,7 @@
                 var from_date = this.historyFormData.fromDate;
                 var to_date = this.historyFormData.toDate;
 
-                var startdt = new Date(from_date);
-                var enddt = new Date(to_date);
-                var startwk = calc_approx_week(startdt);
-                var endwk = calc_approx_week(enddt);
-
-                var url = '/jobs/_design/job_stats/_list/deg_by_week/job_weekly_stats?group=true&level=exact';
-                url = url + '&startkey=[\"\",\"' + startwk + '\"]';
-                url = url + '&endkey=[\"\u9999\",\"' + endwk + '\"]';
-
-                $http.get(url).
+                JobDataService.job_weekly_change_gradient(from_date, to_date).
                 success(function(data) {
                     JobGraphService.change_graph(data, 'summary-reduce');
                 });
@@ -253,7 +198,7 @@
     });
 
 
-    app.controller('HistoryController',["$http", "JobGraphService", function($http, JobGraphService) {
+    app.controller('HistoryController', ["JobGraphService", "JobDataService", function(JobGraphService, JobDataService) {
 
         this.history = function() {
             if (this.historyFormData) {
@@ -263,40 +208,25 @@
                 var from_date = this.historyFormData.fromDate;
                 var to_date = this.historyFormData.toDate;
 
-                var url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
-
-
-                url = url + '&startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
-                url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
-
-                $http.get(url).
+                JobDataService.job_stats(program_name, from_date, to_date).
                 success(function(data) {
                     JobGraphService.duration_overview(data, 'summary-results');
                 });
 
-                url = '/jobs/_design/job_stats/_list/duration/job_summary?group=true&level=exact';
-                url = url + '&startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
-                url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
 
-                $http.get(url).
+                JobDataService.job_duration(program_name, from_date, to_date).
                 success(function(data) {
                     JobGraphService.history_graph(data, 'summary-history');
                 });
 
-                url = '/jobs/_design/job_details/_list/parallel_calls/server?';
-                url = url + 'startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
-                url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
 
-                $http.get(url).
+                JobDataService.parallel_calls(program_name, from_date, to_date).
                 success(function(data) {
                     JobGraphService.concurrent_graph(data, 'summary-parallel');
-                    });
+                });
 
-                url = '/jobs/_design/job_stats/_list/proc_percentages/abap_db_split?group=true&level=exact&';
-                url = url + 'startkey=[\"' + program_name + '\",\"' + from_date + '\"]';
-                url = url + '&endkey=[\"' + program_name + '\",\"' + to_date + '\u9999\"]';
 
-                $http.get(url).
+                JobDataService.processing_characteristics(program_name, from_date, to_date).
                 success(function(data) {
                     JobGraphService.processing_graph(data, 'summary-processing');
                 });
@@ -308,12 +238,13 @@
 
     }]);
 
+
+
     var historyFormData = {
         fromDate: new Date(),
         toDate: new Date(),
         program: ''
     };
-
 
 
 
@@ -329,16 +260,5 @@
 
 
 
-    function calc_approx_week(dt) {
-
-        var yr = dt.getFullYear();
-        var approx_yr_start = yr + "-01-01T00:00:00.000Z";
-        var startdtsecs = Date.parse(approx_yr_start);
-        var dtsecs = dt.getTime();
-
-        var week = (dtsecs - startdtsecs) / 604800000;
-        return Math.floor(week);
-
-    }
 
 })();
