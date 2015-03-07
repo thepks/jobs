@@ -223,9 +223,10 @@
                 for (var i = 0; i < data.rows.length; i++) {
 
                     var key = data.rows[i].key;
+                    var value = data.rows[i].value;
                     var split_key = key.split(/\|/g);
                     var ptype = split_key[1];
-                    if (program_type === ptype) {
+                    if (program_type === ptype && value !== 0) {
                         data_rows.push(data.rows[i]);
                     }
                 }
