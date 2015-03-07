@@ -8,13 +8,15 @@
             var deferred = $.defer();
             var token = id;
             var usr;
+            var roles;
             var that = this;
             var url = "/jobs/_bulk_docs";
             var data;
 
             $http.get("/_session").
             then(function(res) {
-                that.usr = res.userCtx.name;
+                usr = res.userCtx.name;
+                roles =  res.userCtx.roles;
             }).
             then(that.data = get_upload_object(parsed_lines, that.usr)).
             then($http.post(that.url, that.data)).

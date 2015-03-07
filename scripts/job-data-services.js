@@ -19,13 +19,14 @@
 
 
 
+
     app.factory("JobDataService", ["$http", "$q", function($http, $q) {
 
 
         return {
 
             authenticate: function(username, password) {
-
+                
                 return $http.post("/_session", {
                     name: username,
                     password: password
@@ -39,6 +40,7 @@
                 return $http.delete("/_session",{withCredentials : true});
 
             },
+            
 
             job_stats: function(program_name, from_date, to_date) {
 
