@@ -43,7 +43,7 @@
                             <li ng-show="job.logged_on">
                                 <a href="#" id="degradationEvt" ng-click="job.setOption(5)">Trends</a>
                             </li>
-                            <li ng-show="job.logged_on">
+                            <li ng-show="false">
                                 <a href="#" id="recommendationEvt" ng-click="job.setOption(6)">Recommendations</a>
                             </li>
                         </ul>
@@ -102,7 +102,7 @@
                         <div class="row form-group"> <span class="col-sm-6">
                     <span id='program-sect'>
                       <label for="program_name">Program</label>
-                      <select name="program-name" id="program-name" ng-model="historyCtrl.historyFormData.program" 
+                      <select class="form-control" name="program-name" id="program-name" ng-model="historyCtrl.historyFormData.program" 
                       ng-options="n for n in historyCtrl.program_names()">
                           </select>
                     </span>
@@ -160,6 +160,23 @@
                              </span>
 
                         </div>
+                        <div class="row form-group"> <span class="col-sm-3">
+                                <label for="programType">Program Type</label>
+                                <select name="programType" id="programType" class="form-control" ng-model="variabilityCtrl.historyFormData.programType" 
+                                ng-options="n for n in variabilityCtrl.program_types()">
+                                    </select>
+                            </span>
+                            <span class="col-sm-3">
+                                <span ng-show="variabilityCtrl.isNamespace()">
+                                    <label for="namespace">Namespace</label>
+                                    <input type="text" id="namespace" class="form-control" ng-model="variabilityCtrl.historyFormData.namespace">&nbsp;
+                                </span>
+                                    &nbsp;
+                            </span> 
+                            <span class="col-sm-6">&nbsp;</span>
+                        </div>                        
+                        
+                        
                         <div class- "row form-group"> <span class="col-sm-3">
                                 <button type="button" class="btn btn-primary" id="variability-button" ng-click="variabilityCtrl.history()">Display</button>
                              </span>
@@ -169,12 +186,10 @@
                     </div>
                 </form>
                 <section ng-show="job.isOption(4) && variabilityCtrl.job_data">
-                    <section>
                         <div>
                             <p>Overview of job variability, high variability is usually a bad sign</p>
                         </div>
                         <div id="variability-results"></div>
-                    </section>
                 </section>
             </section>
             <section ng-show="job.isOption(5)" ng-controller="ChangeController as changeCtrl">
@@ -192,12 +207,30 @@
                                                  </span>
 
                         </div>
-                        <div class- "row form-group"> <span class="col-sm-3">
-                                                    <button type="button" class="btn btn-primary" id="variability-button" ng-click="changeCtrl.history()">Display</button>
-                                                 </span>
- <span class="col-sm-9">&nbsp;</span>
-
+                        <div class="row form-group"> <span class="col-sm-3">
+                                <label for="programType">Program Type</label>
+                                <select name="programType" id="programType" class="form-control" ng-model="changeCtrl.historyFormData.programType" 
+                                ng-options="n for n in changeCtrl.program_types()">
+                                    </select>
+                            </span>
+                            <span class="col-sm-3">
+                                <span ng-show="changeCtrl.isNamespace()">
+                                    <label for="namespace">Namespace</label>
+                                    <input type="text" id="namespace" class="form-control" ng-model="changeCtrl.historyFormData.namespace">&nbsp;
+                                </span>
+                                    &nbsp;
+                            </span> 
+                            <span class="col-sm-6">&nbsp;</span>
                         </div>
+
+                        <div class="row form-group"> <span class="col-sm-3">
+                                <button type="button" class="btn btn-primary" id="variability-button" ng-click="changeCtrl.history()">Display</button>
+                            </span>
+ <span class="col-sm-3">&nbsp;</span>
+
+<span class="col-sm-6">&nbsp;</span>
+
+                    </div>
                     </div>
                 </form>
                 <section ng-show="job.isOption(5) && changeCtrl.job_data">

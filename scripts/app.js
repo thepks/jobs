@@ -132,6 +132,45 @@
 
     app.controller('VariabilityController', ["JobGraphService", "JobDataService", function(JobGraphService, JobDataService) {
 
+        this.historyFormData = {
+            fromDate: new Date(),
+            toDate: new Date(),
+            program: '',
+            programType: 'Any',
+            company: '',
+            namespace: ''
+        };
+
+        this.form_program_type = function(program_type, namespace) {
+            var ptype = '';
+            if (program_type && program_type !== 'ALL') {
+                ptype = program_type;
+            }
+
+            if (program_type && program_type === 'Namespace') {
+                ptype = namespace;
+            }
+            return ptype;
+        };
+
+        this.filter_results = function(data, program_type) {
+            var data_rows = [];
+            var togo = {};
+
+            for (var i = 0; i < data.rows.length; i++) {
+
+                var key = data.rows[i].key;
+                var ptype = key[3];
+                if (program_type === ptype) {
+                    data_rows.push(data.rows[i]);
+                }
+            }
+            togo.rows = data_rows;
+            return togo;
+        };
+
+
+
         this.history = function() {
             var that = this;
 
@@ -141,14 +180,28 @@
 
                 var from_date = this.historyFormData.fromDate;
                 var to_date = this.historyFormData.toDate;
+                var programType = this.historyFormData.programType;
+                var namespace = this.historyFormData.namespace;
 
                 JobDataService.general_stats(from_date, to_date).
                 success(function(data) {
-                    JobGraphService.variability_graph(data, 'variability-results');
+                    var ptype = JobDataService.form_program_type(programType, namespace);
+                    var new_data = JobDataService.filter_results(data, ptype);
+
+                    JobGraphService.variability_graph(new_data, 'variability-results');
                 });
 
                 this.job_data = true;
             }
+        };
+
+        this.program_types = function() {
+            return JobDataService.program_types();
+        };
+
+        this.isNamespace = function() {
+            if (this.historyFormData.programType.length < 1) return false;
+            return (this.historyFormData.programType === 'Namespace');
         };
 
 
@@ -156,6 +209,17 @@
     }]);
 
     app.controller('ChangeController', ["JobGraphService", "JobDataService", function(JobGraphService, JobDataService) {
+
+        this.historyFormData = {
+            fromDate: new Date(),
+            toDate: new Date(),
+            program: '',
+            programType: 'Any',
+            company: '',
+            namespace: ''
+        };
+
+
 
         this.history = function() {
             var that = this;
@@ -166,16 +230,29 @@
 
                 var from_date = this.historyFormData.fromDate;
                 var to_date = this.historyFormData.toDate;
+                var programType = this.historyFormData.programType;
+                var namespace = this.historyFormData.namespace;
+
 
                 JobDataService.job_weekly_change_gradient(from_date, to_date).
                 success(function(data) {
-                    JobGraphService.change_graph(data, 'summary-reduce');
+                    var ptype = JobDataService.form_program_type(programType, namespace);
+                    var new_data = JobDataService.filter_results_change(data, ptype);
+                    JobGraphService.change_graph(new_data, 'summary-reduce');
                 });
                 this.job_data = true;
             }
         };
 
 
+        this.program_types = function() {
+            return JobDataService.program_types();
+        }
+
+        this.isNamespace = function() {
+            if (this.historyFormData.programType.length < 1) return false;
+            return (this.historyFormData.programType === 'Namespace');
+        }
 
     }]);
 
@@ -200,6 +277,16 @@
 
     app.controller('HistoryController', ["JobGraphService", "JobDataService", function(JobGraphService, JobDataService) {
 
+        this.historyFormData = {
+            fromDate: new Date(),
+            toDate: new Date(),
+            program: '',
+            programType: '',
+            company: '',
+            namespace: ''
+        };
+
+
         this.program_names = function() {
             return JobDataService.program_names();
         };
@@ -211,9 +298,13 @@
                 var program_name = this.historyFormData.program;
                 var from_date = this.historyFormData.fromDate;
                 var to_date = this.historyFormData.toDate;
+                var programType = this.historyFormData.programType;
+                var namespace = this.historyFormData.namespace;
+
 
                 JobDataService.job_stats(program_name, from_date, to_date).
                 success(function(data) {
+
                     JobGraphService.duration_overview(data, 'summary-results');
                 });
 
@@ -241,15 +332,6 @@
 
 
     }]);
-
-
-
-    var historyFormData = {
-        fromDate: new Date(),
-        toDate: new Date(),
-        program: ''
-    };
-
 
 
 

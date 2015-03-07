@@ -340,7 +340,8 @@
                             var new_row = [];
                             var value = raw_data.rows[i].value;
                             var key = raw_data.rows[i].key;
-                            new_row = [key, value];
+                            var key2 = key.split(/\|/g)[0];
+                            new_row = [key2, value];
 
                             data_rows.push(new_row);
 
@@ -361,9 +362,6 @@
                             },
                             vAxis: {
                                 title: 'Program',
-                                textStyle: {
-                                    fontSize: 7
-                                }
                             },
                             legend: 'none',
 
