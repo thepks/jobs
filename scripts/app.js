@@ -66,17 +66,17 @@
             });
 
         };
-        
+
         this.isLoggedOn = function() {
             return JobDataService.get_auth_status().logged_on;
         }
-        
+
         this.isAdmin = function() {
             var roles = JobDataService.get_auth_status().roles;
             if (!roles) {
                 return false;
             }
-            for (var i=0; i<roles.length; i++) {
+            for (var i = 0; i < roles.length; i++) {
                 if (roles[i] === '_admin') {
                     return true;
                 }
@@ -84,7 +84,7 @@
             return false;
         }
 
-    
+
 
     }]);
 
@@ -292,6 +292,44 @@
 
     });
 
+
+    app.controller('jobAdminController', ["JobDataService", function(JobDataService) {
+        this.searchuser = '';
+        this.option = 0;
+        this.newuser = '';
+        this.newuserpwd = '';
+        this.newusercompany = '';
+        this.users = [];
+        
+        this.search = function() {
+            var that=this;
+            this.option = 2;
+            this.users = [];
+            JobDataService.list_users(this.searchuser).
+            success(function(data) {
+                       that.users = data.rows;
+                   });
+
+        };
+        
+        this.setOption = function(val) {
+            this.option = val;
+        };
+        
+        this.isOption = function(val) {
+            return this.option === val;
+        };
+        
+        this.create = function() {
+            JobDataService.create_user(this.newuser, this.newuserpwd, this.newusercompany).
+            success(function(data) {
+                        console.log("Created! "+ data);
+                        this.option = 0;
+                    });
+            
+        };
+
+    }]);
 
     app.controller('HistoryController', ["JobGraphService", "JobDataService", function(JobGraphService, JobDataService) {
 

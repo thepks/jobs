@@ -44,7 +44,7 @@
                                 <a href="#" id="degradationEvt" ng-click="job.setOption(5)">Trends</a>
                             </li>
                             <li ng-show="job.isAdmin()">
-                                <a href="../admin/index.html" id="adminEvt" ng-click="job.setOption(6)">Admin</a>
+                                <a href="#" id="adminUserEvt" ng-click="job.setOption(10)">Users</a>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
@@ -268,6 +268,55 @@
                     </form>
                 </div>
             </section>
+            <section id="userAdminSection" ng-show="job.isOption(10)" ng-controller="jobAdminController as adminCtrl">
+                <div id="userAdmin" class="container">
+                    <form role="form" id="userAdmin" novalidate>
+                        <div class="row form-group"> 
+                        <span class="col-sm-9">
+                            <label for="searchuser">User</label>
+                                <input type="text" id="searchuser" name="searchuser" class="form-control" ng-model="adminCtrl.searchuser"/>
+                                <button type="button" class="btn btn-primary" id="adminUserSearchButton" ng-click="adminCtrl.search()"><span class="glyphicon glyphicon-search"></span> Search</button>
+                                <button type="button" class="btn" id="adminUserNewButton" ng-click="adminCtrl.setOption(1)"><span class="glyphicon glyphicon-user"></span> New User</button>
+                        </span>
+                        <span class="col-sm-3">&nbsp;</span>
+                        </div>
+                    </form>
+                </div>
+                <section ng-show="adminCtrl.isOption(1)">
+                    <form role="form" id="userAdminNew" novalidate>
+                        <div class="row form-group"> 
+                        <span class="col-sm-12">
+                            <label for="newuser">User</label>
+                                <input type="text" id="newuser" name="newuser" class="form-control" ng-model="adminCtrl.newuser" required/>
+                            <label for="newuser">Password (Post SHA1 Hash)</label>
+                                <input type="text" id="newuserpwd" name="newuserpwd" class="form-control" ng-model="adminCtrl.newuserpwd" required/>
+                            <label for="newuser">Company</label>
+                                <input type="text" id="newusercompany" name="newusercompany" class="form-control" ng-model="adminCtrl.newusercompany" required/>
+                        </span>
+                        </div>
+                        <div class="row form-group"> 
+                        <span class="col-sm-12">
+                                <button type="button" class="btn btn-primary" id="adminUserCreateButton" ng-click="adminCtrl.create()"><span class="glyphicon glyphicon-user"></span> Create User</button>
+                        </span>
+                        </div>
+                    </form>
+                </section>
+                <section ng-show="adminCtrl.isOption(2)" class="container">
+                    <h4 ng-repeat="user in adminCtrl.users" class="row"> 
+                            <a href="#" ng-click="adminCtrl.edit(user)">
+                              <span class="glyphicon glyphicon-pencil"></span>
+                            </a>&nbsp;
+                        
+                            <a href="#" ng-click="adminCtrl.delete(user)">
+                              <span class="glyphicon glyphicon-trash"></span>
+                            </a>&nbsp;
+                            
+                            {{user.doc.name}}
+                            
+                    </h4>
+                </section>
+            </section>
+
     </body>
     <script>
         $(document).ready(function() {

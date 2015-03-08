@@ -97,7 +97,33 @@
                 });
 
             },
+            
+            create_user: function(user, pass, company) {
+                
+                var comp = "JOB_CO_" + company;
+                var roles = [comp];
+                var id = {};
+                id._id = "org.couchdb.user:"+user;
+                id.name = user;
+                id.roles = roles;
+                id.type = 'user';
+                id.password = pass;
+                id.withCredentials = true;
+                
+                return $http.put("/_users/org.couchdb.user:"+user , JSON.stringify(id));
+                
+            },
 
+            list_users: function(search) {
+                
+                var url = '/_users/_all_docs?include_docs=true';
+                if (search.length > 0) {
+                    url = url + '&startkey="org.couchdb.user:'+search+'"&endkey="org.couchdb.user:'+search+'\u9999"';
+                } else {
+                    url = url + '&startkey="org.couchdb.user"';
+                }
+                return $http.get(url, {withCredentials:true});
+            },
 
             job_stats: function(program_name, from_date, to_date) {
 
