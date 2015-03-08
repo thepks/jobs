@@ -3,6 +3,10 @@
     var app = angular.module('JobDataService', []);
 
     var programNames = ['Please logon first'];
+    
+    var logged_on = false;
+    var logged_on_user;
+    var logged_on_roles;
 
     function calc_approx_week(dt) {
 
@@ -64,6 +68,26 @@
                 }, {
                     withCredentials: true
                 });
+            },
+
+            set_auth_status : function(username, roles) {
+                logged_on_user = username;
+                logged_on_roles = roles;
+                logged_on = true;
+            },
+            
+            clear_auth_status : function() {
+                logged_on = false;
+                logged_on_user = '';
+                logged_on_roles = '';
+            },
+            
+            get_auth_status : function() {
+                var togo ={};
+                togo.logged_on = logged_on;
+                togo.username = logged_on_user;
+                togo.roles = logged_on_roles;
+                return togo;
             },
 
             end_session: function() {

@@ -28,9 +28,10 @@
             var that = this;
 
             JobDataService.authenticate(this.username, this.password).
-            success(function() {
+            success(function(data) {
                 that.option = 1;
                 that.logged_on = true;
+                JobDataService.set_auth_status(data.name, data.roles);
                 setTimeout(function() {
                     JobDataService.populate_program_names();
                 }, 200);
@@ -50,9 +51,6 @@
         };
 
 
-
-
-
         this.logoff = function() {
             console.log('In event logoff');
             this.logged_on = false;
@@ -61,12 +59,32 @@
             JobDataService.end_session().
             success(function(data, status, headers) {
                 JobDataService.reset_program_names();
+                JobDataService.clear_auth_status();
             }).
             error(function(data, status) {
                 console.log('failed to logoff');
             });
 
         };
+        
+        this.isLoggedOn = function() {
+            return JobDataService.get_auth_status().logged_on;
+        }
+        
+        this.isAdmin = function() {
+            var roles = JobDataService.get_auth_status().roles;
+            if (!roles) {
+                return false;
+            }
+            for (var i=0; i<roles.length; i++) {
+                if (roles[i] === '_admin') {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    
 
     }]);
 

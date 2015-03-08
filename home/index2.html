@@ -43,8 +43,8 @@
                             <li ng-show="job.logged_on">
                                 <a href="#" id="degradationEvt" ng-click="job.setOption(5)">Trends</a>
                             </li>
-                            <li ng-show="false">
-                                <a href="#" id="recommendationEvt" ng-click="job.setOption(6)">Recommendations</a>
+                            <li ng-show="job.isAdmin()">
+                                <a href="../admin/index.html" id="adminEvt" ng-click="job.setOption(6)">Admin</a>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
