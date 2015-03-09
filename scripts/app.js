@@ -300,6 +300,7 @@
         this.newuserpwd = '';
         this.newusercompany = '';
         this.users = [];
+        this.currentUser = {};
         
         this.search = function() {
             var that=this;
@@ -321,12 +322,40 @@
         };
         
         this.create = function() {
+            that = this;
             JobDataService.create_user(this.newuser, this.newuserpwd, this.newusercompany).
             success(function(data) {
                         console.log("Created! "+ data);
-                        this.option = 0;
+                        that.option = 0;
                     });
             
+        };
+        
+        this.edit = function(user) {
+            this.currentUser = user;
+            this.option = 3;
+        };
+        
+        this.delete = function(user) {
+            this.currentUser = user;
+            this.option = 4;
+        };
+        
+        this.update = function() {
+            that = this;
+            
+            JobDataService.update_user(this.currentUser).success(function(){console.log("changed");that.option=0;});
+            
+        };
+        
+        this.remove = function() {
+          that = this; 
+          JobDataService.delete_user(this.currentUser.doc.name, this.currentUser.doc._rev).
+          success(function() {
+              console.log("Deleted!");
+              that.option = 0;
+             
+          });
         };
 
     }]);

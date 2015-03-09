@@ -124,6 +124,24 @@
                 }
                 return $http.get(url, {withCredentials:true});
             },
+            
+            delete_user: function(user, rev) {
+                var url = '/_users/org.couchdb.user:'+user+'?rev='+rev;
+                return $http.delete(url, {withCredentials:true});
+            },
+            
+            update_user: function(user) {
+                
+                var url = '/_users/org.couchdb.user:'+user.doc.name;
+                
+                if(user.password && user.password.length > 0 && user.password === user.password2) {
+                    user.doc.password = user.password;   
+                }
+                
+                user.doc.withCredentials = true
+                return $http.put(url,user.doc);
+                
+            },
 
             job_stats: function(program_name, from_date, to_date) {
 

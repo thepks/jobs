@@ -288,8 +288,8 @@
                         <span class="col-sm-12">
                             <label for="newuser">User</label>
                                 <input type="text" id="newuser" name="newuser" class="form-control" ng-model="adminCtrl.newuser" required/>
-                            <label for="newuser">Password (Post SHA1 Hash)</label>
-                                <input type="text" id="newuserpwd" name="newuserpwd" class="form-control" ng-model="adminCtrl.newuserpwd" required/>
+                            <label for="newuserpwd">Password (Post SHA1 Hash)</label>
+                                <input type="password" id="newuserpwd" name="newuserpwd" class="form-control" ng-model="adminCtrl.newuserpwd" required/>
                             <label for="newuser">Company</label>
                                 <input type="text" id="newusercompany" name="newusercompany" class="form-control" ng-model="adminCtrl.newusercompany" required/>
                         </span>
@@ -314,6 +314,34 @@
                             {{user.doc.name}}
                             
                     </h4>
+                </section>
+                <section ng-show="adminCtrl.isOption(3)" class="container">
+                    <form role="form" id="userAdminNew" novalidate>
+                        <div class="row form-group"> 
+                        <span class="col-sm-6">
+                            <h4> {{ adminCtrl.currentUser.doc.name }}</h4>
+                            <label for="edituserpwd">Password (Post SHA1 Hash)</label>
+                                <input type="password" id="edituserpwd" name="edituserpwd" class="form-control" ng-model="adminCtrl.currentUser.password"/>
+                            <label for="edituserpwd2">Repeat Password</label>
+                            <input type="password" id="edituserpwd2" name="edituserpwd2" class="form-control" ng-model="adminCtrl.currentUser.password2" />
+    
+                            <label for="edituser">Company</label>
+                                <input type="text" id="editusercompany" name="newusercompany" class="form-control" ng-model="adminCtrl.currentUser.doc.roles[0]" />
+                        </span>
+                        <span class="col-sm-6">&nbsp;</span>
+                        </div>
+                        <div class="row form-group"> 
+                        <span class="col-sm-12">
+                                <button type="button" class="btn btn-primary" id="adminUserEditButton" ng-click="adminCtrl.update()"><span class="glyphicon glyphicon-user"></span> Update User</button>
+                        </span>
+                        </div>
+                    </form>
+                </section>
+                <section ng-show="adminCtrl.isOption(4)" class="container">
+                    <h4> {{ adminCtrl.currentUser.doc.name }}</h4>
+                    <form role="form" id="userAdminDelete" novalidate>
+                            <button type="button" class="btn btn-primary" id="adminUserDeleteButton" ng-click="adminCtrl.remove()"><span class="glyphicon glyphicon-trashr"></span> Delete User</button>
+                    </form>
                 </section>
             </section>
 
