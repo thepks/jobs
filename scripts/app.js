@@ -1,5 +1,5 @@
 (function() {
-    var app = angular.module('jobAnalyser', ["upload", "JobGraphService", "JobDataService"]);
+    var app = angular.module('jobAnalyser', ["upload", "JobGraphService", "JobDataService","MessageLogService", "messageLog"]);
 
     var option = 0;
     var job_data = false;
@@ -9,7 +9,10 @@
     var username;
     var password;
 
-    app.controller('JobController', ["JobDataService", function(JobDataService) {
+
+
+
+    app.controller('JobController', ["JobDataService", "MessageLogService", function(JobDataService, MessageLogService) {
 
         this.setOption = function(value) {
             this.option = value;
@@ -26,25 +29,25 @@
         this.logon = function() {
             console.log(this.username);
             var that = this;
-
+            
             JobDataService.authenticate(this.username, this.password).
             success(function(data) {
                 that.option = 1;
                 that.logged_on = true;
                 JobDataService.set_auth_status(data.name, data.roles);
                 setTimeout(function() {
-                    JobDataService.populate_program_names();
+                    JobDataService.populate_program_names().
+                    then(function() {
+                        MessageLogService.add_message("Logon Complete");
+                        
+                    }, function(data) {
+                        MessageLogService.add_message(data);
+                        
+                    });
                 }, 200);
             }).
             error(function(data, status) {
-                that.logon_error = 1;
-                that.logon_error_message = 'Logon Failed! ' + status;
-
-
-                setTimeout(function() {
-                    that.logon_error = 0;
-                }, 2000);
-
+                MessageLogService.add_message("Logon Failed! " + status);
             });
 
 
@@ -57,11 +60,11 @@
             this.option = 1;
 
             JobDataService.end_session().
-            success(function(data, status, headers) {
+            then(function(data, status, headers) {
                 JobDataService.reset_program_names();
                 JobDataService.clear_auth_status();
-            }).
-            error(function(data, status) {
+                MessageLogService.clear_messages();
+            },function(data, status) {
                 console.log('failed to logoff');
             });
 
@@ -69,7 +72,7 @@
 
         this.isLoggedOn = function() {
             return JobDataService.get_auth_status().logged_on;
-        }
+        };
 
         this.isAdmin = function() {
             var roles = JobDataService.get_auth_status().roles;
@@ -82,7 +85,7 @@
                 }
             }
             return false;
-        }
+        };
 
 
 
@@ -293,7 +296,8 @@
     });
 
 
-    app.controller('jobAdminController', ["JobDataService", function(JobDataService) {
+
+    app.controller('jobAdminController', ["JobDataService", "MessageLogService", function(JobDataService, MessageLogService) {
         this.searchuser = '';
         this.option = 0;
         this.newuser = '';
@@ -301,61 +305,64 @@
         this.newusercompany = '';
         this.users = [];
         this.currentUser = {};
-        
+
         this.search = function() {
-            var that=this;
+            var that = this;
             this.option = 2;
             this.users = [];
             JobDataService.list_users(this.searchuser).
             success(function(data) {
-                       that.users = data.rows;
-                   });
+                that.users = data.rows;
+            });
 
         };
-        
+
         this.setOption = function(val) {
             this.option = val;
         };
-        
+
         this.isOption = function(val) {
             return this.option === val;
         };
-        
+
         this.create = function() {
             that = this;
             JobDataService.create_user(this.newuser, this.newuserpwd, this.newusercompany).
             success(function(data) {
-                        console.log("Created! "+ data);
-                        that.option = 0;
-                    });
-            
+                MessageLogService.add_message("User Created");
+                that.option = 0;
+            });
+
         };
-        
+
         this.edit = function(user) {
             this.currentUser = user;
             this.option = 3;
         };
-        
+
         this.delete = function(user) {
             this.currentUser = user;
             this.option = 4;
         };
-        
+
         this.update = function() {
             that = this;
-            
-            JobDataService.update_user(this.currentUser).success(function(){console.log("changed");that.option=0;});
-            
+
+            JobDataService.update_user(this.currentUser).success(function() {
+                MessageLogService.add_message("User changed");
+                that.option = 0;
+            });
+
         };
-        
+
         this.remove = function() {
-          that = this; 
-          JobDataService.delete_user(this.currentUser.doc.name, this.currentUser.doc._rev).
-          success(function() {
-              console.log("Deleted!");
-              that.option = 0;
-             
-          });
+            that = this;
+            JobDataService.delete_user(this.currentUser.doc.name, this.currentUser.doc._rev).
+            success(function() {
+                MessageLogService.add_message("User Deleted");
+                that.option = 0;
+
+            });
         };
 
     }]);

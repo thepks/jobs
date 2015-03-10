@@ -315,6 +315,10 @@
                     withCredentials: true
                 }).
                 success(function(data) {
+                    if (typeof(data) !== 'object' || !('rows' in data)) {
+                        deferred.reject('Failed to get a valid reply to job type listing request');
+                        return;
+                    }
                     duplist = data.rows.map(function(a) {
                         return a.key[0];
                     });

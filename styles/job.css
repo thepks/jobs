@@ -42,3 +42,8 @@ section {
 .job-change-reduce, .job-change-increase, .job-change-neutral {
   display: none;
 }
+
+.feedback {
+    color: red;
+    
+}
