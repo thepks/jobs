@@ -176,7 +176,15 @@
                                 </span>
                                     &nbsp;
                             </span> 
-                            <span class="col-sm-6">&nbsp;</span>
+                            <span class="col-sm-3">
+                                <span ng-show="job.isAdmin()">
+                                    <label for="company">Company</label>
+                                    <input type="text" id="company" class="form-control" ng-model="variabilityCtrl.historyFormData.company">&nbsp;
+                                </span>
+                                    &nbsp;
+                            </span> 
+
+                            <span class="col-sm-3">&nbsp;</span>
                         </div>                        
                         
                         
@@ -223,7 +231,16 @@
                                 </span>
                                     &nbsp;
                             </span> 
-                            <span class="col-sm-6">&nbsp;</span>
+                            <span class="col-sm-3">
+                                <span ng-show="job.isAdmin()">
+                                    <label for="company">Company</label>
+                                    <input type="text" id="company" class="form-control" ng-model="changeCtrl.historyFormData.company">&nbsp;
+                                </span>
+                                    &nbsp;
+                            </span> 
+
+                            <span class="col-sm-3">&nbsp;</span>
+
                         </div>
 
                         <div class="row form-group"> <span class="col-sm-3">

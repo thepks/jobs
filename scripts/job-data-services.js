@@ -261,26 +261,34 @@
                 return ptype;
             },
 
-            filter_results: function(data, program_type) {
+            filter_results: function(data, program_type, company) {
                 var data_rows = [];
                 var togo = {};
                 if (program_type === "") {
                     return data;
                 }
+                
 
                 for (var i = 0; i < data.rows.length; i++) {
 
                     var key = data.rows[i].key;
                     var ptype = key[3];
+                    var cval = key[2]
                     if (program_type === ptype) {
-                        data_rows.push(data.rows[i]);
+                        if(company && company.length > 0) {
+                            if (company === cval) {
+                                data_rows.push(data.rows[i]);    
+                            }
+                        } else {
+                            data_rows.push(data.rows[i]);
+                        }
                     }
                 }
                 togo.rows = data_rows;
                 return togo;
             },
 
-            filter_results_change: function(data, program_type) {
+            filter_results_change: function(data, program_type, company) {
                 var data_rows = [];
                 var togo = {};
                 if (program_type === "") {
@@ -294,8 +302,15 @@
                     var value = data.rows[i].value;
                     var split_key = key.split(/\|/g);
                     var ptype = split_key[1];
+                    var cval = split_key[2];
                     if (program_type === ptype && value !== 0) {
-                        data_rows.push(data.rows[i]);
+                        if(company && company.length > 0) {
+                            if (company === cval) {
+                                data_rows.push(data.rows[i]);    
+                            }
+                        } else {
+                            data_rows.push(data.rows[i]);
+                        }
                     }
                 }
                 togo.rows = data_rows;

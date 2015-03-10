@@ -203,11 +203,12 @@
                 var to_date = this.historyFormData.toDate;
                 var programType = this.historyFormData.programType;
                 var namespace = this.historyFormData.namespace;
+                var company = this.historyFormData.company;
 
                 JobDataService.general_stats(from_date, to_date).
                 success(function(data) {
                     var ptype = JobDataService.form_program_type(programType, namespace);
-                    var new_data = JobDataService.filter_results(data, ptype);
+                    var new_data = JobDataService.filter_results(data, ptype, company);
 
                     JobGraphService.variability_graph(new_data, 'variability-results');
                 });
@@ -253,12 +254,13 @@
                 var to_date = this.historyFormData.toDate;
                 var programType = this.historyFormData.programType;
                 var namespace = this.historyFormData.namespace;
+                var company = this.historyFormData.company;
 
 
                 JobDataService.job_weekly_change_gradient(from_date, to_date).
                 success(function(data) {
                     var ptype = JobDataService.form_program_type(programType, namespace);
-                    var new_data = JobDataService.filter_results_change(data, ptype);
+                    var new_data = JobDataService.filter_results_change(data, ptype, company);
                     JobGraphService.change_graph(new_data, 'summary-reduce');
                 });
                 this.job_data = true;
