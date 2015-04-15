@@ -34,7 +34,7 @@
             success(function(data) {
                 that.option = 1;
                 that.logged_on = true;
-                JobDataService.set_auth_status(data.name, data.roles);
+                JobDataService.set_auth_status(that.username, data.roles, data.company);
                 setTimeout(function() {
                     JobDataService.populate_program_names().
                     then(function() {
@@ -80,7 +80,7 @@
                 return false;
             }
             for (var i = 0; i < roles.length; i++) {
-                if (roles[i] === '_admin') {
+                if (roles[i] === 'admin') {
                     return true;
                 }
             }

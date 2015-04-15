@@ -7,6 +7,7 @@
     var logged_on = false;
     var logged_on_user;
     var logged_on_roles;
+    var logged_on_company;
 
     function calc_approx_week(dt) {
 
@@ -62,17 +63,17 @@
 
             authenticate: function(username, password) {
 
-                return $http.post("/_session", {
+                return $http.post("/action/logon", {
                     name: username,
                     password: password
-                }, {
-                    withCredentials: true
-                });
+                }
+                );
             },
 
-            set_auth_status : function(username, roles) {
+            set_auth_status : function(username, roles, company) {
                 logged_on_user = username;
                 logged_on_roles = roles;
+                logged_on_company = company;
                 logged_on = true;
             },
             
@@ -92,130 +93,115 @@
 
             end_session: function() {
 
-                return $http.delete("/_session", {
-                    withCredentials: true
-                });
+                return $http.delete("/action/logoff");
 
             },
             
             create_user: function(user, pass, company) {
                 
-                var comp = "JOB_CO_" + company;
-                var roles = [comp];
+                var comp = company;
+                var roles = 'user';
                 var id = {};
-                id._id = "org.couchdb.user:"+user;
+                id._id = user;
                 id.name = user;
                 id.roles = roles;
                 id.type = 'user';
                 id.password = pass;
                 id.withCredentials = true;
                 
-                return $http.put("/_users/org.couchdb.user:"+user , JSON.stringify(id));
+                return $http.put("/jobs/"+user , JSON.stringify(id));
                 
             },
 
             list_users: function(search) {
                 
-                var url = '/_users/_all_docs?include_docs=true';
+                var url = '/jobs/_design/useradmin/_view/userlist?include_docs=true';
                 if (search.length > 0) {
-                    url = url + '&startkey="org.couchdb.user:'+search+'"&endkey="org.couchdb.user:'+search+'\u9999"';
-                } else {
-                    url = url + '&startkey="org.couchdb.user"';
-                }
-                return $http.get(url, {withCredentials:true});
+                    url = url + '&startkey="'+search+'"&endkey="'+search+'\u9999"';
+                } 
+                return $http.get(url);
             },
             
             delete_user: function(user, rev) {
-                var url = '/_users/org.couchdb.user:'+user+'?rev='+rev;
-                return $http.delete(url, {withCredentials:true});
+                var url = '/jobs/'+user+'?rev='+rev;
+                return $http.delete(url);
             },
             
             update_user: function(user) {
                 
-                var url = '/_users/org.couchdb.user:'+user.doc.name;
+                var url = '/jobs/'+user.doc.name;
                 
                 if(user.password && user.password.length > 0 && user.password === user.password2) {
                     user.doc.password = user.password;   
                 }
                 
-                user.doc.withCredentials = true
                 return $http.put(url,user.doc);
                 
             },
 
             job_stats: function(program_name, from_date, to_date) {
 
-                var startkey = form_from_key(program_name, from_date);
-                var endkey = form_to_key(program_name, to_date);
+                var startkey = form_from_key(program_name, from_date,logged_on_company);
+                var endkey = form_to_key(program_name, to_date,logged_on_company);
 
-                var url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
+                var url = '/jobs/_design/job_stats/_list/job_stats?group=true&level=exact';
                 url = url + '&startkey=' + startkey;
                 url = url + '&endkey=' + endkey;
 
-                return $http.get(url, {
-                    withCredentials: true
-                });
+                return $http.get(url);
 
             },
 
             job_duration: function(program_name, from_date, to_date) {
 
-                var startkey = form_from_key(program_name, from_date);
-                var endkey = form_to_key(program_name, to_date);
+                var startkey = form_from_key(program_name, from_date, logged_on_company);
+                var endkey = form_to_key(program_name, to_date, logged_on_company);
 
                 var url = '/jobs/_design/job_stats/_list/duration/job_summary?group=true&level=exact';
                 url = url + '&startkey=' + startkey;
                 url = url + '&endkey=' + endkey;
 
-                return $http.get(url, {
-                    withCredentials: true
-                });
+                return $http.get(url);
 
             },
 
 
             parallel_calls: function(program_name, from_date, to_date) {
 
-                var startkey = form_from_key(program_name, from_date);
-                var endkey = form_to_key(program_name, to_date);
+                var startkey = form_from_key(program_name, from_date, logged_on_company);
+                var endkey = form_to_key(program_name, to_date, logged_on_company);
 
 
                 var url = '/jobs/_design/job_details/_list/parallel_calls/server?';
                 url = url + '&startkey=' + startkey;
                 url = url + '&endkey=' + endkey;
 
-                return $http.get(url, {
-                    withCredentials: true
-                });
+                return $http.get(url);
 
             },
 
             processing_characteristics: function(program_name, from_date, to_date) {
 
-                var startkey = form_from_key(program_name, from_date);
-                var endkey = form_to_key(program_name, to_date);
+                var startkey = form_from_key(program_name, from_date, logged_on_company);
+                var endkey = form_to_key(program_name, to_date, logged_on_company);
 
                 var url = '/jobs/_design/job_stats/_list/proc_percentages/abap_db_split?group=true&level=exact&';
                 url = url + '&startkey=' + startkey;
                 url = url + '&endkey=' + endkey;
 
-                return $http.get(url, {
-                    withCredentials: true
-                });
+                return $http.get(url);
 
             },
 
             general_stats: function(from_date, to_date) {
 
-                var startkey = form_from_key("{}", from_date);
-                var endkey = form_to_key("", to_date);
+                var startkey = form_from_key("{}", from_date, logged_on_company);
+                var endkey = form_to_key("", to_date, logged_on_company);
 
-                var url = '/jobs/_design/job_stats/_list/byuser/job_stats?group=true&level=exact';
+                var url = '/jobs/_design/job_stats/_list/job_stats?group=true&level=exact';
                 url = url + '&startkey=' + startkey;
                 url = url + '&endkey=' + endkey;
-                return $http.get(url, {
-                    withCredentials: true
-                });
+                return $http.get(url);
 
             },
 
@@ -234,9 +220,7 @@
                 url = url + '&startkey=' + startkey;
                 url = url + '&endkey=' + endkey;
 
-                return $http.get(url, {
-                    withCredentials: true
-                });
+                return $http.get(url);
 
             },
 
@@ -326,9 +310,7 @@
                 var deduplist = [];
                 var data;
 
-                $http.get(url, {
-                    withCredentials: true
-                }).
+                $http.get(url).
                 success(function(data) {
                     if (typeof(data) !== 'object' || !('rows' in data)) {
                         deferred.reject('Failed to get a valid reply to job type listing request');
