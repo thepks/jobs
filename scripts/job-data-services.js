@@ -62,12 +62,12 @@
         return {
 
             authenticate: function(username, password) {
+                var userobj = {};
+                userobj.user = {};
+                userobj.user.username = username;
+                userobj.user.password = password;
 
-                return $http.post("/action/logon", {
-                    name: username,
-                    password: password
-                }
-                );
+                return $http.post("/action/logon", userobj);
             },
 
             set_auth_status : function(username, roles, company) {
