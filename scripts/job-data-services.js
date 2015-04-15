@@ -195,10 +195,10 @@
 
             general_stats: function(from_date, to_date) {
 
-                var startkey = form_from_key("{}", from_date, logged_on_company);
-                var endkey = form_to_key("", to_date, logged_on_company);
+                var startkey = form_from_key("{}", from_date);
+                var endkey = form_to_key("", to_date);
 
-                var url = '/jobs/_design/job_stats/_list/job_stats?group=true&level=exact';
+                var url = '/jobs/_design/job_stats/_view/job_stats?group=true&level=exact';
                 url = url + '&startkey=' + startkey;
                 url = url + '&endkey=' + endkey;
                 return $http.get(url);
