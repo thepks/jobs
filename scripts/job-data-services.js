@@ -157,7 +157,7 @@
                 var startkey = form_from_key(program_name, from_date, logged_on_company);
                 var endkey = form_to_key(program_name, to_date, logged_on_company);
 
-                var url = '/jobs/_design/job_stats/_view/duration/job_summary?group=true&level=exact';
+                var url = '/jobs/_design/job_stats/_list/duration/job_summary?group=true&level=exact';
                 url = url + '&startkey=' + startkey;
                 url = url + '&endkey=' + endkey;
 
