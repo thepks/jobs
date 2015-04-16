@@ -1,30 +1,24 @@
 (function() {
-    var app = angular.module('upload', []);
+    var app = angular.module('upload', ["JobDataService"]);
 
-    app.controller('UploadController', function($http) {
+    app.controller('UploadController', ["$http", "JobDataService"] , function($http, JobDataService) {
+        
+        this.file_upload = '';
 
-        this.upload_job_data = function(parsed_lines, id) {
+        this.upload = function() {
 
             var deferred = $.defer();
-            var token = id;
-            var usr;
-            var roles;
             var that = this;
-            var url = "/jobs/_bulk_docs";
-            var data;
 
-            $http.get("/_session").
-            then(function(res) {
-                usr = res.userCtx.name;
-                roles =  res.userCtx.roles;
+            var data = get_upload_object(this.file_upload).
+            success (function(d) {
+                JobDataService.file_upload(d).
+                success (function(d2) {
+                    that.deferred.resolve(d2);
+                });
             }).
-            then(that.data = get_upload_object(parsed_lines, that.usr)).
-            then($http.post(that.url, that.data)).
-            success(function(data) {
-                deferred.resolve(token)
-            }).
-            error(function(data) {
-                deferred.reject(token);
+            error(function(derror) {
+                that.deferred.reject(derror);
             });
 
             return deferred.promise();

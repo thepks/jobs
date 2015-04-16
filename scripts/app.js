@@ -287,6 +287,8 @@
         this.model = {
             file: []
         };
+        
+        this.result = '';
 
         this.upload = function(m) {
             console.log(m.file);

@@ -338,6 +338,10 @@
                 return deferred.promise;
 
             },
+            
+            file_upload: function(jobs) {
+                return $http.post("/jobs/_bulk_docs", JSON.stringify(jobs));
+            },
 
             reset_program_names: function() {
                 programNames = ['Please logon'];
