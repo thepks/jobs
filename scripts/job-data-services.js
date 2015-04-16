@@ -374,6 +374,11 @@
             
             file_upload: function(jobs) {
                 // each record needs the user record and company adding
+                for (var v=0; v<jobs.docs.length; v++) {
+                    jobs.docs[v].owner = logged_on_user;
+                    jobs.docs[v].company = logged_on_company;
+                    jobs.docs[v].Progtype = apply_standard_program(jobs.docs[v].Progname);
+                }
                 return $http.post("/jobs/_bulk_docs", JSON.stringify(jobs));
             },
 
