@@ -165,21 +165,8 @@
 
         this.upload = function() {
 
-            var deferred = $q.defer();
-            var that = this;
-
-            get_upload_object(this.file_upload).
-            success (function(d) {
-                JobDataService.file_upload(d).
-                success (function(d2) {
-                    that.deferred.resolve(d2);
-                });
-            }).
-            error(function(derror) {
-                that.deferred.reject(derror);
-            });
-
-            return deferred.promise();
+        var data = get_upload_object(this.file_upload);
+        return JobDataService.file_upload(data);
         };
 
 
