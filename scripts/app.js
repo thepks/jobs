@@ -91,65 +91,6 @@
 
     }]);
 
-    app.controller('UploadController2', function() {
-
-
-        this.load = function() {
-
-
-            console.log('About to read');
-
-            console.log($('#importFiles')[0].files[0]['name']);
-            return;
-
-
-
-            $('#load-feedback').text("Loading ... please wait");
-            $('#load-feedback').show();
-
-            var uploads = event.target.files.length;
-
-            for (var i = 0; i < event.target.files.length; i++) {
-                new file_parser(event.target.files[i]).
-                then(upload_job_data).
-                then(function() {
-                    console.log('Upload done!');
-                    uploads--;
-
-
-                    if (uploads === 0) {
-
-                        $('#load-feedback').text("Upload completed");
-
-                        self.fetch_job_types();
-
-                        setTimeout(function() {
-                            $('#load-feedback').hide();
-                        }, 5000);
-
-
-                    }
-
-
-
-                },
-
-                function(error) {
-
-                    $('#load-feedback').text("The file specified cannot be read");
-
-                    setTimeout(function() {
-                        $('#load-feedback').hide();
-                    }, 2000);
-
-
-                });
-            }
-
-            //            upload_job_data(parsed_lines, id)
-
-        };
-    });
 
     app.controller('VariabilityController', ["JobGraphService", "JobDataService", function(JobGraphService, JobDataService) {
 
@@ -278,27 +219,6 @@
         }
 
     }]);
-
-    app.controller('UploadController', function() {
-
-        //        var Files = $resource('/files/:id', { id: "@id" });
-
-
-        this.model = {
-            file: []
-        };
-        
-        this.result = '';
-
-        this.upload = function(m) {
-            console.log(m.file);
-            //                Files.prototype.$save.call(model.file, function(self, headers) {
-            // Handle server response
-            //                });
-        };
-
-    });
-
 
 
     app.controller('jobAdminController', ["JobDataService", "MessageLogService", function(JobDataService, MessageLogService) {
