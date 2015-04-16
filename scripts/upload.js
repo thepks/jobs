@@ -161,7 +161,7 @@
 
 
 
-    app.controller('UploadController', ["JobDataService" , "$q"] , function(JobDataService, $q) {
+    app.controller('UploadController', ["JobDataService" , "$q" , function(JobDataService, $q) {
         
         this.file_upload = '';
 
@@ -186,7 +186,7 @@
 
 
 
-    });
+    }]);
 
 
 
