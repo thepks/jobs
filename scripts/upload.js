@@ -1,5 +1,5 @@
 (function() {
-    var app = angular.module('UploadController', ["JobDataService"]);
+    var app = angular.module('UploadController', ["JobDataService", "MessageLogService"]);
     
     function get_upload_object(data) {
 
@@ -159,14 +159,21 @@
 
 
 
-    app.controller('UploadController', ["JobDataService" , function(JobDataService) {
+    app.controller('UploadController', ["JobDataService" , "MessageLogService", function(JobDataService, MessageLogService) {
         
         this.file_upload = '';
 
         this.upload = function() {
 
         var data = get_upload_object(parse_html(this.file_upload));
-        return JobDataService.file_upload(data);
+        JobDataService.file_upload(data).
+        success(function(d) {
+            MessageLogService.add_message("Upload completed successfully. ["+d+"]");
+        }).
+        error(function(error) {
+            MessageLogService.add_message("Upload failed " + error);
+        });
+
         };
 
 
