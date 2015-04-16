@@ -1,5 +1,5 @@
 (function() {
-    var app = angular.module('jobAnalyser', ["upload", "JobGraphService", "JobDataService","MessageLogService", "messageLog"]);
+    var app = angular.module('jobAnalyser', ["UploadController", "JobGraphService", "JobDataService","MessageLogService", "messageLog"]);
 
     var option = 0;
     var job_data = false;

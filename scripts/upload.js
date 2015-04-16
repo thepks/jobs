@@ -1,5 +1,5 @@
 (function() {
-    var app = angular.module('upload', ["JobDataService"]);
+    var app = angular.module('UploadController', ["JobDataService"]);
     
     function get_upload_object(data, username) {
 
