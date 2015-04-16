@@ -165,7 +165,7 @@
 
         this.upload = function() {
 
-        var data = get_upload_object(this.file_upload);
+        var data = get_upload_object(parse_html(this.file_upload));
         return JobDataService.file_upload(data);
         };
 
