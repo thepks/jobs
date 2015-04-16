@@ -1,7 +1,7 @@
 (function() {
     var app = angular.module('UploadController', ["JobDataService"]);
     
-    function get_upload_object(data, username) {
+    function get_upload_object(data) {
 
         var config = {
             "job_field": "1",
@@ -98,8 +98,6 @@
                 //            console.log(job);
                 job.type = "JobRecord";
                 job.structure = "v0.1";
-                job.owner = username;
-
                 job_list.push(job);
 
 

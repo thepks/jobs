@@ -340,6 +340,7 @@
             },
             
             file_upload: function(jobs) {
+                // each record needs the user record
                 return $http.post("/jobs/_bulk_docs", JSON.stringify(jobs));
             },
 
