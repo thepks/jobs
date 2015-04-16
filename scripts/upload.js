@@ -168,7 +168,7 @@
         var data = get_upload_object(parse_html(this.file_upload));
         JobDataService.file_upload(data).
         success(function(d) {
-            MessageLogService.add_message("Upload completed successfully. ["+d+"]");
+            MessageLogService.add_message("Upload completed successfully.");
         }).
         error(function(error) {
             MessageLogService.add_message("Upload failed " + error);
