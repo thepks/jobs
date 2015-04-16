@@ -49,6 +49,39 @@
         togo += "]";
         return togo;
     }
+    
+    function apply_standard_program(progname) {
+        var namespace;
+        
+        if (progname) {
+            namespace = progname.split(/\//);
+            if (namespace.length == 1) {
+                if (namespace[0].indexOf("Z") === 0 || namespace[0].indexOf("Y") === 0) {
+                    return "Custom";
+                } else if (namespace[0] === "RFKK_MASS_ACT_SINGLE_JOB") {
+                    return "Mass";
+                } else {
+                    return "Standard";
+                }
+            } else {
+                return namespace[1];
+            }
+        } else {
+            return "Unknown";
+        }
+    }
+    
+    function apply_standard_company(roles) {
+        
+        for (var i = 0; i < roles.length; i++) {
+            if (roles[i].indexOf("JOB_CO") === 0) {
+                return roles[i].split(/_/)[2];
+            }
+        }
+        return "Check Roles";
+    
+    }
+    
 
 
     var program_types = ['Any', 'Standard', 'Custom', 'Mass', 'Namespace'];
@@ -340,7 +373,7 @@
             },
             
             file_upload: function(jobs) {
-                // each record needs the user record
+                // each record needs the user record and company adding
                 return $http.post("/jobs/_bulk_docs", JSON.stringify(jobs));
             },
 
