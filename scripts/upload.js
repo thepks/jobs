@@ -1,13 +1,13 @@
 (function() {
     var app = angular.module('upload', ["JobDataService"]);
 
-    app.controller('UploadController', ["$http", "JobDataService"] , function($http, JobDataService) {
+    app.controller('UploadController', ["$http", "JobDataService" , "$q"] , function($http, JobDataService, $q) {
         
         this.file_upload = '';
 
         this.upload = function() {
 
-            var deferred = $.defer();
+            var deferred = $q.defer();
             var that = this;
 
             var data = get_upload_object(this.file_upload).
