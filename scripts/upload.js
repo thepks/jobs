@@ -168,7 +168,7 @@
             var deferred = $q.defer();
             var that = this;
 
-            this.get_upload_object(this.file_upload).
+            get_upload_object(this.file_upload).
             success (function(d) {
                 JobDataService.file_upload(d).
                 success (function(d2) {
