@@ -9,7 +9,7 @@ var service_config = {
     'host': 'blue-wave-28-192823.euw1-2.nitrousbox.com',                                                         
     'port': 5984,                                                                                       
     'path': '/jobs',                                                               
-    'username': 'thepks',                                                                                  
+    'username': '',                                                                                  
     'password': ''                                                                   
 }; 
 
@@ -20,48 +20,56 @@ var form_user_search = function(username) {
     return "/jobs/"+username;
 };
 
-var form_post_headers = function(username) {
-    return {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(form_user_search(username), 'utf8'),
-        'Authorization': 'Basic ' + new Buffer(service_config.username + ":" + service_config.password).toString('base64')
-    };
-};
 
-var form_proxy_headers = function(body) {
-    if (body === undefined) {
-        return {
-        'Authorization': 'Basic ' + new Buffer(service_config.username + ":" + service_config.password).toString('base64')
-        };
-    } else {
-    return {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(body, 'utf8'),
-        'Authorization': 'Basic ' + new Buffer(service_config.username + ":" + service_config.password).toString('base64')
-    };
+var form_proxy_options = function(req) {
+
+//    console.log(JSON.stringify(req.headers));
+
+    var new_headers = {};
+    if ('content-type' in req.headers) {
+    new_headers['content-type'] = req.headers['content-type'];
     }
-};
+    if ('content-length' in req.headers) {
+        new_headers['content-length'] = req.headers['content-length'];
+    } 
+    new_headers['Authorization'] = 'Basic ' + new Buffer(service_config.username + ":" + service_config.password).toString('base64');
 
 
-var form_proxy_options = function(method,url,body) {
-    
+ 
     return {
-        host: service_config.host,
+        hostname: service_config.host,
         port: service_config.port,
-        path: url,
-        method: method,
-        headers: form_proxy_headers(body)
+        path: req.url,
+        method: req.method,
+        headers: new_headers 
     };
 };
 
-app.use(express.static('/home/action/jobs/'));
+var form_proxy_options2 = function(method,pathreq) {
+
+    var new_headers = {};
+    new_headers['Authorization'] = 'Basic ' + new Buffer(service_config.username + ":" + service_config.password).toString('base64');
+
+
+ 
+    return {
+        hostname: service_config.host,
+        port: service_config.port,
+        path: pathreq,
+        method: method,
+        headers: new_headers 
+    };
+};
+
+
+app.use(express.static('/home/action/jobanalysis'));
 
 app.use(session({
     keys: ['flog1', '2flog', 'fl3og']
 }));
 
 
-app.get(/jobs/, function(req, res) {
+app.all(/jobs/, function(req, res) {
 
     if (!req.session.auth) {
         res.statusCode = 401;
@@ -69,8 +77,9 @@ app.get(/jobs/, function(req, res) {
         return false;
     }
 
+ //   console.log(JSON.stringify(form_proxy_options(req)));
     // do the proxy call call
-    var reqGet = http.request(form_proxy_options('GET',req.originalUrl), function(resembedded) {
+    var reqGet = http.request(form_proxy_options(req), function(resembedded) {
         console.log("statusCode: ", resembedded.statusCode);
         // uncomment it for header details
         //  console.log("headers: ", res.headers);
@@ -79,67 +88,19 @@ app.get(/jobs/, function(req, res) {
 
     });
 
+    req.addListener('data', function(d) {
+//    console.log(d);
+    reqGet.write(d,'binary');
+    });
+
+    req.addListener('end', function (d) {
     reqGet.end();
+    });
+
     reqGet.on('error', function(e) {
         console.error(e);
-    });
-});
-
-app.put(/jobs/, jsonParser, function(req, res) {
-
-    if (!req.session.auth) {
-        res.statusCode = 401;
-        res.send("Unauthorized");
-        return false;
-    }
-    
-    var origBody = JSON.stringify(req.body);
-    console.log(origBody);
-    
-    // do the POST call
-    var reqPut = http.request(form_proxy_options('PUT',req.originalUrl,origBody), function(resembedded) {
-        console.log("statusCode: ", resembedded.statusCode);
-        // uncomment it for header details
-        //  console.log("headers: ", res.headers);
-        
-        resembedded.pipe(res);
-    
-    });
-    // write the json data
-    reqPut.write(origBody);
-    reqPut.end();
-    
-    reqPut.on('error', function(e) {
-        console.error(e);
-    });
-});
-
-app.delete(/jobs/, function(req, res) {
-
-    if (!req.session.auth) {
-        res.statusCode = 401;
-        res.send("Unauthorized");
-        return false;
-    }
-    
-    var origBody = JSON.stringify(req.body);
-    console.log(origBody);
-    
-    // do the POST call
-    var reqDel = http.request(form_proxy_options('DELETE',req.originalUrl), function(resembedded) {
-        console.log("statusCode: ", resembedded.statusCode);
-        // uncomment it for header details
-        //  console.log("headers: ", res.headers);
-        
-        resembedded.pipe(res);
-    
-    });
-    // write the json data
-
-    reqDel.end();
-    
-    reqDel.on('error', function(e) {
-        console.error(e);
+    res.statusCode = 500;
+    res.send('Error ' + e);
     });
 });
 
@@ -153,28 +114,28 @@ app.all('/action/logoff', function(req, res) {
 
 });
 
-        app.post('/action/logon', jsonParser, function(req, res) {
-            var secret;
-            var md = forge.md.sha1.create();
-            md.update(req.body.user.password);
-            secret = md.digest().toHex();
-            console.log(secret);
-            console.log(form_user_search(req.body.user.username));
+app.post('/action/logon', jsonParser, function(req, res) {
+var secret;
+var md = forge.md.sha1.create();
+md.update(req.body.user.password);
+secret = md.digest().toHex();
+//console.log(secret);
+//console.log(form_user_search(req.body.user.username));
 
-            // do the call
-            var reqGet = http.request(form_proxy_options('GET',form_user_search(req.body.user.username)), function(resembedded) {
-                console.log("statusCode: ", resembedded.statusCode);
-                // uncomment it for header details
-                //  console.log("headers: ", res.headers);
-        var data_comb ='';
+// do the call
+var reqGet = http.request(form_proxy_options2('GET',form_user_search(req.body.user.username)), function(resembedded) {
+//console.log("statusCode: ", resembedded.statusCode);
+// uncomment it for header details
+//  console.log("headers: ", res.headers);
+var data_comb ='';
 
-                resembedded.on('data', function(d) {
-            data_comb+=d;
-        });
+resembedded.on('data', function(d) {
+    data_comb+=d;
+});
 
-        resembedded.on('end', function() {
-                    var result = {};
-                    console.info('logon result:\n');
+resembedded.on('end', function() {
+    var result = {};
+        console.info('logon result:\n');
                     console.info('Get completed');
                     var p = JSON.parse(data_comb);
             console.log(data_comb);
@@ -222,12 +183,12 @@ app.all('/action/logoff', function(req, res) {
         });
 
 
-        var server = app.listen(8080, function() {
+var server = app.listen(8080, function() {
 
-            var host = server.address().address;
-            var port = server.address().port;
+    var host = server.address().address;
+    var port = server.address().port;
 
-            console.log('Server app listening at http://%s:%s', host, port);
+    console.log('Server app listening at http://%s:%s', host, port);
 
-        });
+});
 
