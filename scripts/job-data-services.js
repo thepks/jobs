@@ -353,7 +353,7 @@
                         return;
                     }
                     duplist = data.rows.map(function(a) {
-                        return a.key[0];
+                        return a.key[1];
                     });
 
                     deduplist = duplist.reduce(function(a, b) {
