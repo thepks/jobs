@@ -338,7 +338,7 @@
 
                 var deferred = $q.defer();
 
-                var url = '/jobs/_design/job_details/_list/byuser/owner?group=true&level=exact';
+                var url = '/jobs/_design/job_details/owner?group=true&level=exact';
                 var duplist = [];
                 var deduplist = [];
                 var data;
