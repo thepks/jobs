@@ -338,7 +338,10 @@
 
                 var deferred = $q.defer();
 
-                var url = '/jobs/_design/job_details/owner?group=true&level=exact';
+                var startkey = form_from_key(logged_on_company);
+                var endkey = form_to_key(logged_on_company);
+
+                var url = '/jobs/_design/job_details/_view/owner?group=true&level=exact&startkey='+startkey+"&endkey="+endkey;
                 var duplist = [];
                 var deduplist = [];
                 var data;
